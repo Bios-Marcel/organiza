@@ -3,25 +3,30 @@ using FileUtil;
 namespace Organiza {
 	[GtkTemplate (ui = "/org/organiza/Organiza/window.ui")]
 	public class Window : Gtk.ApplicationWindow {
-		[GtkChild]
-		Gtk.ListStore currentFolderHierarchy;
-
         [GtkChild]
         Gtk.TreeView fileView;
+		[GtkChild]
+		Gtk.ListStore currentFolderHierarchy;
 
         string currentRootDirectory = "/";
 
 		public Window (Gtk.Application app) {
 			Object (application: app);
-			Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default ();
+
+            loadFileManagerIcon();
+            updateFileView ();
+		    fileView.row_activated.connect (on_row_activated);
+    	}
+
+    	private void loadFileManagerIcon() {
+    	    Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default ();
 		    try {
 			    icon = icon_theme.load_icon ("system-file-manager", 48, 0);
 		    } catch (Error e) {
 			    warning (e.message);
+			    //In case we can't find an icon, we just won't set one.
 		    }
 
-		    updateFileView ();
-		    fileView.row_activated.connect (on_row_activated);
     	}
 
     	private void select_first() {
@@ -35,13 +40,24 @@ namespace Organiza {
             try {
                 currentFolderHierarchy.clear ();
                 var directory = File.new_for_path (currentRootDirectory);
-                var enumerator = directory.enumerate_children ("standard::*", 0);
+                var enumerator = directory.enumerate_children ("standard::*", FileQueryInfoFlags.NONE);
 
-                FileInfo fileInfo;
-                while ((fileInfo = enumerator.next_file ()) != null) {
+                FileInfo childFileInfo;
+                while ((childFileInfo = enumerator.next_file ()) != null) {
                     Gtk.TreeIter iter;
                     currentFolderHierarchy.append (out iter);
-                    currentFolderHierarchy.set (iter, 0, fileInfo.get_name (), 1, FileUtil.get_file_size (fileInfo));
+
+                    string fileSize;
+                    if(childFileInfo.get_file_type () == FileType.DIRECTORY) {
+                        //Calculating a directories recursively takes too long, therefore we won't display such info.
+                        fileSize = "";
+                    } else {
+                        //TODO Format this to be human readable.
+                        fileSize = @"$(childFileInfo.get_size ())";
+                    }
+
+                    //TODO Currently the displayed item is just a forbidden sign; find a way to find the mime types icon.
+                    currentFolderHierarchy.set (iter, 0, childFileInfo.get_symbolic_icon (), 1, childFileInfo.get_name (), 2, fileSize);
                 }
                 select_first ();
             } catch (Error e) {
@@ -49,14 +65,16 @@ namespace Organiza {
             }
 		}
 
-		/* List item selection handler. */
-        private void on_row_activated (Gtk.TreeView treeview , Gtk.TreePath path, Gtk.TreeViewColumn column) {            stdout.printf("\tSelection changed\n");
+        /**
+         * Handles leftclicks in the fileView.
+         */
+        private void on_row_activated (Gtk.TreeView treeview , Gtk.TreePath path, Gtk.TreeViewColumn column) {
             Gtk.TreeModel model;
             Gtk.TreeIter iter;
             string name;
 
             treeview.get_selection().get_selected (out model, out iter);
-            model.get (iter, 0, out name);
+            model.get (iter, 1, out name);
 
             var file = File.new_for_path (currentRootDirectory + "/" + name);
             if(FileUtil.is_directory (file)) {
