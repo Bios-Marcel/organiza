@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <object class="GtkListStore" id="currentFolderHierarchy">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name size -->
+      <column type="gint"/>
+    </columns>
+  </object>
+  <template class="OrganizaWindow" parent="GtkApplicationWindow">
+    <property name="default-width">600</property>
+    <property name="default-height">300</property>
+    <child type="titlebar">
+      <object class="GtkHeaderBar" id="header_bar">
+        <property name="visible">true</property>
+        <property name="show-close-button">True</property>
+        <property name="title">Organiza</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkScrolledWindow" id="scrolledwindow1">
+        <property name="visible">true</property>
+        <property name="hscrollbar_policy">automatic</property>
+        <property name="vscrollbar_policy">automatic</property>
+        <child>
+          <object class="GtkTreeView" id="fileView">
+            <property name="activate-on-single-click">1</property>
+            <property name="visible">true</property>
+            <property name="can_focus">true</property>
+            <property name="model">currentFolderHierarchy</property>
+            <property name="headers_clickable">0</property>
+            <child>
+              <object class="GtkTreeViewColumn" id="nameColumn">
+                <property name="title" translatable="yes">Name</property>
+                <property name="expand">true</property>
+                <child>
+                  <object class="GtkCellRendererText" id="cellrenderertext1"/>
+                  <attributes>
+                    <attribute name="text">0</attribute>
+                  </attributes>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkTreeViewColumn" id="sizeColumn">
+                <property name="title" translatable="yes">Size</property>
+                <child>
+                  <object class="GtkCellRendererText" id="cellrenderertext2"/>
+                  <attributes>
+                    <attribute name="text">1</attribute>
+                  </attributes>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

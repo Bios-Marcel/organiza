@@ -1,0 +1,5 @@
+data/org.gnome.Organiza.desktop.in
+data/org.gnome.Organiza.appdata.xml.in
+data/org.gnome.Organiza.gschema.xml
+src/window.uisrc/main.vala
+src/window.vala
