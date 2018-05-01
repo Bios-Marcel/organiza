@@ -30,8 +30,8 @@ An attempt at writing a lightweight file manager for GTK3 using vala.
 
 ### 0.0.1
 
-[ ] Displaying the file hierarchy
-[ ] Navigation by mouse and keyboard
+- [ ] Displaying the file hierarchy
+- [ ] Navigation by mouse and keyboard
 
 ### 0.0.2
 
