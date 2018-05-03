@@ -1,9 +1,10 @@
 [default]
 name=Default
-runtime=host
+runtime=flatpak:org.gnome.Platform/x86_64/3.28
 config-opts=
 run-opts=
-prefix=/home/marcel/.var/app/org.gnome.Builder/cache/gnome-builder/install/Organiza/host
+prefix=/app
 app-id=
 postbuild=
 prebuild=
+default=true
