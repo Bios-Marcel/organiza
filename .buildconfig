@@ -3,7 +3,6 @@ name=Default
 runtime=host
 config-opts=
 run-opts=
-prefix=/home/marcel/.var/app/org.gnome.Builder/cache/gnome-builder/install/Organiza/host
 app-id=
 postbuild=
 prebuild=
