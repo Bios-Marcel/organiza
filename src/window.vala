@@ -53,7 +53,7 @@ namespace Organiza {
                         fileSize = "";
                     } else {
                         //TODO Format this to be human readable.
-                        fileSize = @"$(childFileInfo.get_size ())";
+                        fileSize = FileUtil.as_human_readable_binary(childFileInfo.get_size ());
                     }
 
                     //TODO Currently the displayed item is just a forbidden sign; find a way to find the mime types icon.
