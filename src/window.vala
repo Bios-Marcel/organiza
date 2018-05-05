@@ -52,18 +52,25 @@ namespace Organiza {
                         //Calculating a directories recursively takes too long, therefore we won't display such info.
                         fileSize = "";
                     } else {
-                        //TODO Format this to be human readable.
                         fileSize = FileUtil.as_human_readable_binary(childFileInfo.get_size ());
                     }
 
-                    //TODO Currently the displayed item is just a forbidden sign; find a way to find the mime types icon.
-                    currentFolderHierarchy.set (iter, 0, childFileInfo.get_symbolic_icon (), 1, childFileInfo.get_name (), 2, fileSize);
+                    currentFolderHierarchy.set (iter, 0, get_pixbuf_icon(childFileInfo), 1, childFileInfo.get_name (), 2, fileSize);
                 }
                 select_first ();
             } catch (Error e) {
                 stderr.printf ("Error: %s\n", e.message);
             }
 		}
+
+        private Gdk.Pixbuf get_pixbuf_icon(FileInfo info) {
+            //FIXME Currently only folder icons are displayed; Do i have to use something that is not the default theme?
+            //TODO Consider not using a constant icon size
+            //TODO Error treatment and performance optimization through caching.
+            Gtk.IconTheme iconTheme = Gtk.IconTheme.get_default();
+            Icon icon = info.get_icon();
+            return iconTheme.load_icon(icon.to_string(), 24, Gtk.IconLookupFlags.USE_BUILTIN);
+        }
 
         /**
          * Handles leftclicks in the fileView.
