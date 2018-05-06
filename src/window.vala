@@ -40,6 +40,7 @@ namespace Organiza {
             try {
                 currentFolderHierarchy.clear ();
                 var directory = File.new_for_path (currentRootDirectory);
+                //FIXME The documentation suggests to use enumerate_children_async to not block the thread.
                 var enumerator = directory.enumerate_children ("standard::*", FileQueryInfoFlags.NONE);
 
                 FileInfo childFileInfo;
@@ -52,8 +53,7 @@ namespace Organiza {
                         //Calculating a directories recursively takes too long, therefore we won't display such info.
                         fileSize = "";
                     } else {
-                        //TODO Format this to be human readable.
-                        fileSize = FileUtil.as_human_readable_binary(childFileInfo.get_size ());
+                        fileSize = FileUtil.as_nerd_readable_file_size(childFileInfo.get_size ());
                     }
 
                     //TODO Currently the displayed item is just a forbidden sign; find a way to find the mime types icon.

@@ -3,6 +3,7 @@
 	<id>org.organiza.Organiza.desktop</id>
 	<metadata_license>CC0-1.0</metadata_license>
 	<project_license>LicenseRef-proprietary</project_license>
+  <!-- TODO add screenshot tag, because unit test complains about it! -->
 	<description>
 	</description>
 </component>
