@@ -10,9 +10,19 @@ namespace Organiza {
 
         string currentRootDirectory = "/";
 
+        //We needn't retrieve the theme over and over again.
+        Gtk.IconTheme iconTheme = Gtk.IconTheme.get_default();
+
+        //TODO Marcel: I'd prefer using Icon.hash () over Icon.to_string (); Find out how to use uint properly in HashTable
+        //Used for caching icons in order to decrease loading time when switching folders
+        HashTable<string, Gdk.Pixbuf> iconCache = new HashTable<string, Gdk.Pixbuf> (str_hash, str_equal);
+
+
 		public Window (Gtk.Application app) {
 			Object (application: app);
 
+            set_position(Gtk.WindowPosition.CENTER_ALWAYS);
+            set_default_size(700, 500);
             loadFileManagerIcon();
             updateFileView ();
 		    fileView.row_activated.connect (on_row_activated);
@@ -20,14 +30,12 @@ namespace Organiza {
     	}
 
     	private void loadFileManagerIcon() {
-    	    Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default ();
 		    try {
-			    icon = icon_theme.load_icon ("system-file-manager", 48, 0);
+			    icon = iconTheme.load_icon ("system-file-manager", 48, 0);
 		    } catch (Error e) {
 			    warning (e.message);
 			    //In case we can't find an icon, we just won't set one.
 		    }
-
     	}
 
     	private void select_first() {
@@ -57,7 +65,7 @@ namespace Organiza {
                         fileSize = FileUtil.as_nerd_readable_file_size(childFileInfo.get_size ());
                     }
 
-                    currentFolderHierarchy.set (iter, 0,  get_pixbuf_icon(childFileInfo), 1, childFileInfo.get_name (), 2, fileSize);
+                    currentFolderHierarchy.set (iter, 0, get_pixbuf_icon(childFileInfo), 1, childFileInfo.get_name (), 2, fileSize);
                 }
                 select_first ();
             } catch (Error e) {
@@ -68,10 +76,21 @@ namespace Organiza {
         private Gdk.Pixbuf? get_pixbuf_icon(FileInfo info) {
             //TODO Consider not using a constant icon size
             //TODO Error treatment and performance optimization through caching.
-            Gtk.IconTheme iconTheme = Gtk.IconTheme.get_default();
 
             try {
-                return iconTheme.lookup_by_gicon(info.get_icon (), 24, Gtk.IconLookupFlags.USE_BUILTIN).load_icon ();
+                var icon = info.get_icon ();
+                var iconHash =  icon.to_string ();
+                var pixbuf = iconCache.get (iconHash);
+                if(pixbuf == null) {
+                    //If the icon isn't cached yet, we will look it up, add it to the cache and return it.
+                    pixbuf = iconTheme.lookup_by_gicon(icon, 24, Gtk.IconLookupFlags.USE_BUILTIN).load_icon ();
+                    iconCache.insert (iconHash, pixbuf);
+                    return pixbuf;
+                }
+
+                //icon is cached already, therefore we return it.
+                return pixbuf;
+
             } catch (Error error) {
                 stderr.printf("Error retrieving icon for file: %s\n", info.get_name ());
                 return null;
