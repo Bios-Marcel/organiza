@@ -16,6 +16,7 @@ namespace Organiza {
             loadFileManagerIcon();
             updateFileView ();
 		    fileView.row_activated.connect (on_row_activated);
+		    fileView.key_press_event.connect (on_key_pressed);
     	}
 
     	private void loadFileManagerIcon() {
@@ -76,19 +77,46 @@ namespace Organiza {
          * Handles leftclicks in the fileView.
          */
         private void on_row_activated (Gtk.TreeView treeview , Gtk.TreePath path, Gtk.TreeViewColumn column) {
-            Gtk.TreeModel model;
+            navigate_down ();
+        }
+
+        private bool on_key_pressed(Gtk.Widget widget, Gdk.EventKey event) {
+            if (event.keyval == Gdk.Key.Left) {
+                navigate_up ();
+                return true;
+            } else if (event.keyval == Gdk.Key.Right) {
+                navigate_down ();
+                return true;
+            }
+
+            return false;
+    	}
+
+    	private void navigate_up() {
+            var parentFolder = File.new_for_path (currentRootDirectory).get_parent ();
+    	    if(parentFolder != null) {
+    	        currentRootDirectory = parentFolder.get_path ();
+    	        updateFileView();
+    	    }
+    	}
+
+    	private void navigate_down () {
+            var file = get_selected_file ();
+            if(FileUtil.is_directory (file)) {
+                currentRootDirectory = currentRootDirectory + "/" + file.get_basename ();
+                updateFileView();
+            }
+    	}
+
+    	private File get_selected_file() {
+    	    Gtk.TreeModel model;
             Gtk.TreeIter iter;
             string name;
 
-            treeview.get_selection().get_selected (out model, out iter);
+            fileView.get_selection().get_selected (out model, out iter);
             model.get (iter, 1, out name);
 
-            var file = File.new_for_path (currentRootDirectory + "/" + name);
-            if(FileUtil.is_directory (file)) {
-                currentRootDirectory = currentRootDirectory + "/" + name;
-                updateFileView();
-            }
-            stdout.printf("\t%s\n", currentRootDirectory);
-        }
+            return File.new_for_path (currentRootDirectory + "/" + name);
+    	}
 	}
 }
