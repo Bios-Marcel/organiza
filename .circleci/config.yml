@@ -21,9 +21,7 @@ jobs:
       - image: elementary/docker:loki
     steps:
       - checkout
-      - run:
-          name: Install elementary SDK.
-          command: *apt-install
+      - run: *apt-install
       - run:
           name: Make build directory.
           command: mkdir build
@@ -35,9 +33,7 @@ jobs:
       - image: elementary/docker:loki-unstable
     steps:
       - checkout
-      - run:
-          name: Install elementary SDK.
-          command: *apt-install
+      - run: *apt-install
       - run:
           name: Make build directory.
           command: mkdir build
@@ -49,9 +45,7 @@ jobs:
       - image: elementary/docker:loki
     steps:
       - checkout
-      - run:
-          name: Install elementary SDK.
-          command: *apt-install
+      - run: *apt-install
       - run:
           name: Make build directory.
           command: mkdir build
@@ -66,9 +60,7 @@ jobs:
       - image: elementary/docker:loki-unstable
     steps:
       - checkout
-      - run:
-          name: Install elementary SDK.
-          command: *apt-install
+      - run: *apt-install
       - run:
           name: Make build directory.
           command: mkdir build
