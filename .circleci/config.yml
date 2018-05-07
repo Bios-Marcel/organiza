@@ -1,3 +1,9 @@
+#TODO specifying only the deps instead of the huge elementary-sdk meta package
+# would probably speed the build up...
+
+#TODO Program desktop-file-validate found: NO
+#TODO Program appstream-util found: NO
+
 apt-run: &apt-install
   name: Install Linux dependecies via apt.
   command: |
