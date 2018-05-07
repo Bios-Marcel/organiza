@@ -1,8 +1,8 @@
 apt-run: &apt-install
   name: Install Linux dependecies via apt.
   command: |
-    sudo apt-get update
-    sudo apt-get -y install elementary-sdk meson ninja git openssh
+    apt-get update
+    apt-get -y install elementary-sdk meson ninja git openssh
 
 # TODO(bugabinga): Just building is a little useless. The build step should
 # capture some output release thing and push it to GH releases.
