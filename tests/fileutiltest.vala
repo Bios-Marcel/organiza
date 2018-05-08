@@ -1,9 +1,9 @@
-namespace Tests {
+namespace FileUtilTests {
     using Test;
     using FileUtil;
 
-    void add_fileutil_tests () {
-        Test.add_func ("/files/fileutil/as_nerd_readable_file_size", () => {
+    void add_tests () {
+        Test.add_func ("/fileutil/as_nerd_readable_file_size", () => {
 
         assert_equals (as_nerd_readable_file_size(-1), "");
         assert_equals (as_nerd_readable_file_size(-100), "");
@@ -63,6 +63,8 @@ namespace Tests {
         }
         else
         {
+        	// why does Test.message not output anything? seems like it would
+        	// be more appropriate here...
             GLib.message(@"Expected value '$expected', but got '$actual' instead.");
             Test.fail();
         }
@@ -70,7 +72,7 @@ namespace Tests {
 
     void main (string[] args) {
         Test.init (ref args);
-        add_fileutil_tests ();
+        add_tests ();
         Test.run ();
     }
 }
