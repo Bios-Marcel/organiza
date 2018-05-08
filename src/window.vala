@@ -21,9 +21,9 @@ namespace Organiza {
 		public Window (Gtk.Application app) {
 			Object (application: app);
 
-            set_position(Gtk.WindowPosition.CENTER_ALWAYS);
-            set_default_size(700, 500);
-            loadFileManagerIcon();
+            set_position (Gtk.WindowPosition.CENTER);
+            set_default_size (700, 500);
+            loadFileManagerIcon ();
             updateFileView ();
 		    fileView.row_activated.connect (on_row_activated);
 		    fileView.key_press_event.connect (on_key_pressed);
