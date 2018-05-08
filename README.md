@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/Bios-Marcel/Organiza/tree/master.svg?style=svg)](https://circleci.com/gh/Bios-Marcel/Organiza/tree/master)
+
 # Organiza
 An attempt at writing a lightweight file manager for GTK3 using vala.
 
