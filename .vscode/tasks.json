@@ -1,0 +1,35 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "command": "ninja",
+            "args": [
+                //Switching ninjas working dir to the build folder
+                "-Cbuild"
+            ],
+            "label": "Compile and Debug",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": {
+                "owner": "vala",
+                //Little hacky, since valac gives us relative paths starting with `..`, we need to start one directory up.
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/src"
+                ],
+                "pattern": {
+                    "regexp": "^(.*?):(\\d+)[:\\.](\\d+)(?:-(\\d+)\\.(\\d+))?:\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "endLine": 4,
+                    "endColumn": 5,
+                    "severity": 6,
+                    "message": 7
+                }
+            }
+        }
+    ]
+}

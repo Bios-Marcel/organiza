@@ -1,0 +1,8 @@
+{
+    // Path to the uncrustify configuration file
+    "uncrustify.configPath": ".vscode/uncrustify.cfg",
+
+    "uncrustify.graphicalConfig": false,
+
+    "uncrustify.debug": true
+}
