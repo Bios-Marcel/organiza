@@ -17,7 +17,6 @@ namespace Organiza {
         //Used for caching icons in order to decrease loading time when switching folders
         HashTable<string, Gdk.Pixbuf> iconCache = new HashTable<string, Gdk.Pixbuf> (str_hash, str_equal);
 
-
 		public Window (Gtk.Application app) {
 			Object (application: app);
 
@@ -26,7 +25,7 @@ namespace Organiza {
             loadFileManagerIcon ();
             updateFileView ();
 		    fileView.row_activated.connect (on_row_activated);
-		    fileView.key_press_event.connect (on_key_pressed);
+            fileView.key_press_event.connect (on_key_pressed);
     	}
 
     	private void loadFileManagerIcon() {
