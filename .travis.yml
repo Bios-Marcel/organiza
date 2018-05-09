@@ -1,0 +1,20 @@
+language: generic
+services:
+  - docker
+env:
+  - >-
+    DEPENDENCY_PACKAGES="meson ninja-build python3 libgee-0.8-dev libglib2.0-dev
+    libgtk-3-dev valac"
+install:
+  - 'docker pull elementary/docker:juno-stable'
+  - 'docker pull elementary/docker:juno-unstable'
+  - >-
+    docker run -v "$PWD":/tmp/build-dir elementary/docker:juno-stable /bin/sh -c
+    "apt-get update && apt-get -y install $DEPENDENCY_PACKAGES && cd
+    /tmp/build-dir && mkdir build && cd build && meson && ninja test"
+  - >-
+    docker run -v "$PWD":/tmp/build-dir elementary/docker:juno-unstable /bin/sh
+    -c "apt-get update && apt-get -y install $DEPENDENCY_PACKAGES && cd
+    /tmp/build-dir && mkdir build && cd build && meson && ninja test"
+script:
+  - echo BUILDS PASSED
