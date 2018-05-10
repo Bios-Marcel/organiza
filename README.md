@@ -1,6 +1,7 @@
+# Organiza
 [![CircleCI](https://circleci.com/gh/Bios-Marcel/Organiza/tree/master.svg?style=svg)](https://circleci.com/gh/Bios-Marcel/Organiza/tree/master)
 
-# Organiza
+## Description
 An attempt at writing a lightweight file manager for GTK3 using vala.
 
 ## Goals
@@ -36,11 +37,21 @@ An attempt at writing a lightweight file manager for GTK3 using vala.
 - [ ] Navigation by mouse and keyboard
   - [x] Up and down by keyboard
   - [ ] Up and down by mouse
+- [ ] React to file changes and update ui
 #### Development
-- [ ] Unit tests
+- [x] Run build on commit
+- [x] Unit tests
   - [ ] Build Integration
-- [ ] Run build on commit (Travis?)
 
 ### 0.0.2
 
 *TODO*
+
+## How do i work on it best?
+### Visual Studio Code
+
+For optimal experience install the following extensions:
+
+* [TODO Highlight](https://marketplace.visualstudio.com/items?itemName=wayou.vscode-todo-highlight)
+* [Uncrustify](https://marketplace.visualstudio.com/items?itemName=LaurentTreguier.uncrustify)
+* [Vala Code](https://marketplace.visualstudio.com/items?itemName=thiagoabreu.vala)
