@@ -28,13 +28,35 @@ An attempt at writing a lightweight file manager for GTK3 using vala.
   * keybindings for bookmarks
 * Overview of available drives
 
+## How to build
+
+In order to build an executable, you first have to satisfy the dependencies:
+
+Those can be found in [`meson.build` located at `/src`](https://github.com/Bios-Marcel/Organiza/blob/b51fd6b72bb6702ac0d53bdc8eac23295f9ba2a5/src/meson.build#L13).
+
+After downloading necessary dependencies you have to do the following:
+
+1. Navigate into the root folder
+```bash
+cd /path/to/Organiza/
+```
+2. Create and configure the build directory
+```bash
+meson build
+```
+3. Start the build using the previously created build-directory
+```bash
+ninja -Cbuild
+```
+
+The executable file will be located at `build/src` and is called `organiza`.
 
 ## Roadmap
 
 ### 0.0.1
 #### Application
 - [x] Displaying the file hierarchy
-- [ ] Navigation by mouse and keyboard
+- [x] Navigation by mouse and keyboard
   - [x] Up and down by keyboard
   - [x] Up and down by mouse
 - [x] React to file changes and update ui
