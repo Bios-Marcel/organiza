@@ -1,8 +1,28 @@
 {
     // Path to the uncrustify configuration file
     "uncrustify.configPath": ".vscode/uncrustify.cfg",
-
+    // The graphical config is quite buggy and weird
     "uncrustify.graphicalConfig": false,
+    "uncrustify.debug": true,
+    
+    // Enable or disable the highlight
+    "todohighlight.isEnable": true,
+    // Glob patterns that defines the files to search for. Only include files you need, DO NOT USE `{**/*.*}` for both permormance and avoiding binary files reason.
+    "todohighlight.include": [
+        "**/*.vala"
+    ],
+    // Specify whether the keywords are case sensitive or not
+    "todohighlight.isCaseSensitive": false,
 
-    "uncrustify.debug": true
+    "todohighlight.keywords": [
+        "TODO",
+        "FIXME",
+        "HACK"
+    ],
+
+    "todohighlight.defaultStyle": {
+        "color": "#000000",
+        "backgroundColor": "#FF0000",
+        "isWholeLine": false,
+    },
 }
