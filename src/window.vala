@@ -42,12 +42,14 @@ namespace Organiza {
             Gtk.TreeIter iter;
             if ( currentFolderHierarchy.get_iter_first (out iter) ) {
                 fileView.get_selection ().select_iter (iter);
+                fileView.grab_focus ();
             }
         }
 
         private void update_file_view() {
             try {
                 currentFolderHierarchy.clear ();
+
                 var directory = File.new_for_path (currentDirectory);
 
                 if ( currentDirectoryMonitor != null ) {
@@ -59,12 +61,21 @@ namespace Organiza {
                     update_file_view ();
                 });
 
+                Gtk.TreeIter iter;
+
+                // If there is a parent-folder, we wan't to give the user the opportunity to navigate there per mouse, therefore we add an `..` item.
+                var parentFolder = directory.get_parent ();
+                if ( parentFolder != null ) {
+                    currentFolderHierarchy.append (out iter);
+                    var folderIcon = iconTheme.lookup_icon ("folder", 24, Gtk.IconLookupFlags.USE_BUILTIN).load_icon ();
+                    currentFolderHierarchy.set (iter, 0, folderIcon, 1, "..", 2, "");
+                }
+
                 // FIXME The documentation suggests to use enumerate_children_async to not block the thread.
                 var enumerator = directory.enumerate_children ("standard::*", FileQueryInfoFlags.NONE);
 
                 FileInfo childFileInfo;
                 while ( (childFileInfo = enumerator.next_file ()) != null ) {
-                    Gtk.TreeIter iter;
                     currentFolderHierarchy.append (out iter);
 
                     string fileSize;
@@ -77,10 +88,10 @@ namespace Organiza {
 
                     currentFolderHierarchy.set (iter, 0, get_pixbuf_icon (childFileInfo), 1, childFileInfo.get_name (), 2, fileSize);
                 }
-                select_first ();
             } catch ( Error e ) {
                 stderr.printf ("Error: %s\n", e.message);
             }
+            select_first ();
         }
 
         private Gdk.Pixbuf ? get_pixbuf_icon (FileInfo info) {
@@ -109,7 +120,11 @@ namespace Organiza {
          * Handles leftclicks in the fileView.
          */
         private void on_row_activated(Gtk.TreeView treeview, Gtk.TreePath path, Gtk.TreeViewColumn column) {
-            navigate_down ();
+            if ( get_selected_file_name () == ".." ) {
+                navigate_up ();
+            } else {
+                navigate_down ();
+            }
         }
 
         private bool on_key_pressed(Gtk.Widget widget, Gdk.EventKey event) {
@@ -117,8 +132,10 @@ namespace Organiza {
                 navigate_up ();
                 return true;
             } else if ( event.keyval == Gdk.Key.Right ) {
-                navigate_down ();
-                return true;
+                if ( get_selected_file_name () != ".." ) {
+                    navigate_down ();
+                    return true;
+                }
             }
 
             return false;
@@ -140,16 +157,20 @@ namespace Organiza {
             }
         }
 
-        private File get_selected_file() {
+        private string ? get_selected_file_name () {
             Gtk.TreeModel model;
             Gtk.TreeIter iter;
             string name;
 
             fileView.get_selection ().get_selected (out model, out iter);
             model.get (iter, 1, out name);
+            return name;
+        }
 
-            return File.new_for_path (currentDirectory + "/" + name);
+        private File ? get_selected_file () {
+            return File.new_for_path (currentDirectory + "/" + get_selected_file_name ());
         }
 
     }
+
 }
