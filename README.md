@@ -67,7 +67,11 @@ The executable file will be located at `build/src` and is called `organiza`.
 
 ### 0.0.2
 
-*TODO*
+- [ ] Useful / non-annoying default sorting
+- [ ] Change sorting by clicking column headers
+- [ ] Jump to top by `POS1` and to bottom by `END`
+- [ ] Open files
+- [ ] Create new files / folders
 
 ## How do i work on it best?
 ### Visual Studio Code
