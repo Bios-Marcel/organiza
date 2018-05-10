@@ -8,7 +8,8 @@ namespace Organiza {
         [GtkChild]
         Gtk.ListStore currentFolderHierarchy;
 
-        string currentRootDirectory = "/";
+        string currentDirectory = "/";
+        FileMonitor ? currentDirectoryMonitor;
 
         // We needn't retrieve the theme over and over again.
         Gtk.IconTheme iconTheme = Gtk.IconTheme.get_default ();
@@ -17,19 +18,18 @@ namespace Organiza {
         // Used for caching icons in order to decrease loading time when switching folders
         HashTable<string, Gdk.Pixbuf> iconCache = new HashTable<string, Gdk.Pixbuf>(str_hash, str_equal);
 
-
         public Window (Gtk.Application app) {
             Object (application: app);
 
             set_position (Gtk.WindowPosition.CENTER);
             set_default_size (700, 500);
-            loadFileManagerIcon ();
-            updateFileView ();
+            load_file_manager_icon ();
+            update_file_view ();
             fileView.row_activated.connect (on_row_activated);
             fileView.key_press_event.connect (on_key_pressed);
         }
 
-        private void loadFileManagerIcon() {
+        private void load_file_manager_icon() {
             try {
                 icon = iconTheme.load_icon ("system-file-manager", 48, 0);
             } catch ( Error e ) {
@@ -45,10 +45,20 @@ namespace Organiza {
             }
         }
 
-        private void updateFileView() {
+        private void update_file_view() {
             try {
                 currentFolderHierarchy.clear ();
-                var directory = File.new_for_path (currentRootDirectory);
+                var directory = File.new_for_path (currentDirectory);
+
+                if ( currentDirectoryMonitor != null ) {
+                    currentDirectoryMonitor.cancel ();
+                }
+                currentDirectoryMonitor = directory.monitor (FileMonitorFlags.NONE, null);
+                currentDirectoryMonitor.changed.connect ((src, dest, event) => {
+                    // TODO Marcel: Might it be better if i only update the entry containg the file?
+                    update_file_view ();
+                });
+
                 // FIXME The documentation suggests to use enumerate_children_async to not block the thread.
                 var enumerator = directory.enumerate_children ("standard::*", FileQueryInfoFlags.NONE);
 
@@ -115,18 +125,18 @@ namespace Organiza {
         }
 
         private void navigate_up() {
-            var parentFolder = File.new_for_path (currentRootDirectory).get_parent ();
+            var parentFolder = File.new_for_path (currentDirectory).get_parent ();
             if ( parentFolder != null ) {
-                currentRootDirectory = parentFolder.get_path ();
-                updateFileView ();
+                currentDirectory = parentFolder.get_path ();
+                update_file_view ();
             }
         }
 
         private void navigate_down() {
             var file = get_selected_file ();
             if ( FileUtil.is_directory (file) ) {
-                currentRootDirectory = currentRootDirectory + "/" + file.get_basename ();
-                updateFileView ();
+                currentDirectory = currentDirectory + "/" + file.get_basename ();
+                update_file_view ();
             }
         }
 
@@ -138,7 +148,7 @@ namespace Organiza {
             fileView.get_selection ().get_selected (out model, out iter);
             model.get (iter, 1, out name);
 
-            return File.new_for_path (currentRootDirectory + "/" + name);
+            return File.new_for_path (currentDirectory + "/" + name);
         }
 
     }
