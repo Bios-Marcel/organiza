@@ -27,6 +27,7 @@ An attempt at writing a lightweight file manager for GTK3 using vala.
 * Bookmarks
   * keybindings for bookmarks
 * Overview of available drives
+* image thumbnails
 
 ## How to build
 
@@ -47,6 +48,13 @@ meson build
 3. Start the build using the previously created build-directory
 ```bash
 ninja -Cbuild
+```
+
+or
+
+3. Use `ninja`s `install` command
+```
+sudo ninja install
 ```
 
 The executable file will be located at `build/src` and is called `organiza`.
@@ -72,6 +80,7 @@ The executable file will be located at `build/src` and is called `organiza`.
 - [ ] Jump to top by `POS1` and to bottom by `END`
 - [ ] Open files
 - [ ] Create new files / folders
+- [ ] Overview of drives (a folder above `/` that shows all drives as list entries)
 
 ## How do i work on it best?
 ### Visual Studio Code

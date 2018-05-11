@@ -11,12 +11,7 @@ namespace Organiza {
         string currentDirectory = "/";
         FileMonitor ? currentDirectoryMonitor;
 
-        // We needn't retrieve the theme over and over again.
-        Gtk.IconTheme iconTheme = Gtk.IconTheme.get_default ();
-
-        // TODO Marcel: I'd prefer using Icon.hash () over Icon.to_string (); Find out how to use uint properly in HashTable
-        // Used for caching icons in order to decrease loading time when switching folders
-        HashTable<string, Gdk.Pixbuf> iconCache = new HashTable<string, Gdk.Pixbuf>(str_hash, str_equal);
+        IconManager iconManager = new IconManager ();
 
         public Window (Gtk.Application app) {
             Object (application: app);
@@ -30,11 +25,9 @@ namespace Organiza {
         }
 
         private void load_file_manager_icon() {
-            try {
-                icon = iconTheme.load_icon ("system-file-manager", 48, 0);
-            } catch ( Error e ) {
-                warning (e.message);
-                // In case we can't find an icon, we just won't set one.
+            var appIcon = iconManager.get_application_icon ();
+            if(appIcon != null) {
+                icon = appIcon;
             }
         }
 
@@ -67,7 +60,7 @@ namespace Organiza {
                 var parentFolder = directory.get_parent ();
                 if ( parentFolder != null ) {
                     currentFolderHierarchy.append (out iter);
-                    var folderIcon = iconTheme.lookup_icon ("folder", 24, Gtk.IconLookupFlags.USE_BUILTIN).load_icon ();
+                    var folderIcon = iconManager.iconTheme.lookup_icon ("folder", 24, Gtk.IconLookupFlags.USE_BUILTIN).load_icon ();
                     currentFolderHierarchy.set (iter, 0, folderIcon, 1, "..", 2, "");
                 }
 
@@ -86,34 +79,13 @@ namespace Organiza {
                         fileSize = FileUtil.as_nerd_readable_file_size (childFileInfo.get_size ());
                     }
 
-                    currentFolderHierarchy.set (iter, 0, get_pixbuf_icon (childFileInfo), 1, childFileInfo.get_name (), 2, fileSize);
+                    currentFolderHierarchy.set (iter, 0, iconManager.get_pixbuf_icon (childFileInfo), 1, childFileInfo.get_name (), 2, fileSize);
                 }
             } catch ( Error e ) {
                 stderr.printf ("Error: %s\n", e.message);
             }
+
             select_first ();
-        }
-
-        private Gdk.Pixbuf ? get_pixbuf_icon (FileInfo info) {
-            // TODO Consider not using a constant icon size.
-            // TODO Implement a proper error-treatment.
-
-            try {
-                var icon = info.get_icon ();
-                var iconHash = icon.to_string ();
-                var pixbuf = iconCache.get (iconHash);
-                if ( pixbuf == null ) {
-                    // If the icon isn't cached yet, we will look it up, add it to the cache and return it.
-                    pixbuf = iconTheme.lookup_by_gicon (icon, 24, Gtk.IconLookupFlags.USE_BUILTIN).load_icon ();
-                    iconCache.insert (iconHash, pixbuf);
-                }
-
-                // by now pixbuf will be non-null and cached.
-                return pixbuf;
-            } catch ( Error error ) {
-                stderr.printf ("Error retrieving icon for file: %s\n", info.get_name ());
-                return null;
-            }
         }
 
         /**
@@ -151,7 +123,7 @@ namespace Organiza {
 
         private void navigate_down() {
             var file = get_selected_file ();
-            if ( FileUtil.is_directory (file) ) {
+            if ( file.query_file_type (FileQueryInfoFlags.NONE) == FileType.DIRECTORY ) {
                 currentDirectory = currentDirectory + "/" + file.get_basename ();
                 update_file_view ();
             }
