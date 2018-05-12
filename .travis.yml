@@ -11,7 +11,7 @@ script:
     "apt-get update && apt-get -y install $DEPENDENCY_PACKAGES && cd
     /tmp/build-dir && meson build && ninja -C build test"
   - >-
-    docker run -v "$PWD":/tmp/build-dir elementary/docker:loki-unstable' /bin/sh
+    docker run -v "$PWD":/tmp/build-dir elementary/docker:loki-unstable /bin/sh
     -c "apt-get update && apt-get -y install $DEPENDENCY_PACKAGES && cd
     /tmp/build-dir && meson build && ninja -C build test"
   - >-
