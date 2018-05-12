@@ -80,8 +80,8 @@ namespace Organiza {
 
                     currentFolderHierarchy.set (iter, 0, iconManager.get_pixbuf_icon (childFileInfo), 1, childFileInfo.get_name (), 2, fileSize);
                 }
-            } catch ( Error e ) {
-                stderr.printf ("Error: %s\n", e.message);
+            } catch ( Error error ) {
+                stderr.printf ("Error: %s\n", error.message);
             }
 
             select_first ();
@@ -129,10 +129,8 @@ namespace Organiza {
 
         private void navigate_down() {
             var file = get_selected_file ();
-            if ( file.query_file_type (FileQueryInfoFlags.NONE) == FileType.DIRECTORY ) {
-                currentDirectory = currentDirectory + "/" + file.get_basename ();
-                update_file_view ();
-            }
+            currentDirectory = currentDirectory + "/" + file.get_basename ();
+            update_file_view ();
         }
 
         private string ? get_selected_file_name () {

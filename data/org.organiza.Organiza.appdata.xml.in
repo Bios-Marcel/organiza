@@ -52,7 +52,7 @@
     <content_attribute id="money-gambling">none</content_attribute>
   </content_rating>
   <!-- every release can put some notes about it here -->
-  <releases></releases>
+  <!-- <releases></releases> -->
   <custom>
     <!-- sets some branding color in elementary appcenter -->
     <value key="x-appcenter-color-primary">#223388</value>

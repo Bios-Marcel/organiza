@@ -3,12 +3,8 @@
     "tasks": [
         {
             "identifier": "ninja_build",
-            "label": "Compile and Debug",
+            "label": "Compile",
             "type": "process",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
             "command": {
                 "quoting": "strong",
                 "value": "ninja"
@@ -29,7 +25,7 @@
             "isBackground": false,
             "presentation": {
                 "echo": true,
-                "reveal": "never",
+                "reveal": "silent",
                 "focus": true,
                 "panel": "shared"
             },
@@ -113,9 +109,8 @@
                 "cwd": "${workspaceFolder}/build/src"
             },
             "dependsOn": [
-                "Compile"
-            ],
-            "problemMatcher": []
+                "ninja_build"
+            ]
         }
     ]
 }
