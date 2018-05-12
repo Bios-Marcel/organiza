@@ -14,7 +14,7 @@ namespace Organiza {
         IconManager iconManager = new IconManager ();
 
         public Window (Gtk.Application app) {
-            Object (application : app);
+            Object (application: app);
 
             set_position (Gtk.WindowPosition.CENTER);
             set_default_size (700, 500);
@@ -50,9 +50,9 @@ namespace Organiza {
                 }
                 currentDirectoryMonitor = directory.monitor (FileMonitorFlags.NONE, null);
                 currentDirectoryMonitor.changed.connect ((src, dest, event) => {
-                                                             // TODO Marcel: Might it be better if i only update the entry containg the file?
-                                                             update_file_view ();
-                                                         });
+                    // TODO Marcel: Might it be better if i only update the entry containg the file?
+                    update_file_view ();
+                });
 
                 Gtk.TreeIter iter;
 
@@ -81,7 +81,7 @@ namespace Organiza {
 
                     currentFolderHierarchy.set (iter, 0, iconManager.get_pixbuf_icon (childFileInfo), 1, childFileInfo.get_name (), 2, fileSize);
                 }
-            } catch (Error e) {
+            } catch ( Error e ) {
                 stderr.printf ("Error: %s\n", e.message);
             }
 
