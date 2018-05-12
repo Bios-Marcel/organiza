@@ -101,6 +101,21 @@
                     }
                 }
             }
+        },
+        {
+            "label": "Compile and run",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "command": "./organiza",
+            "options": {
+                "cwd": "${workspaceFolder}/build/src"
+            },
+            "dependsOn": [
+                "Compile"
+            ],
+            "problemMatcher": []
         }
     ]
 }
