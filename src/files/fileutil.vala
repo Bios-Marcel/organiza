@@ -148,4 +148,29 @@ namespace FileUtil {
         }
     }
 
+    public void open_file(File fileToOpen) {
+        try {
+            AppInfo.launch_default_for_uri (fileToOpen.get_uri (), null);
+        } catch ( Error error ) {
+            stderr.printf ("Error opening file %s (%s)\n", fileToOpen.get_basename (), error.message);
+
+            FileInfo fileInfo = fileToOpen.query_info ("standard::*", FileQueryInfoFlags.NONE);
+            Gtk.AppChooserWidget appChooser = new Gtk.AppChooserWidget (fileInfo.get_content_type ());
+
+            appChooser.show_recommended = true;
+            appChooser.show_other = true;
+            appChooser.show_default = true;
+
+            var window = new Gtk.Window ();
+            appChooser.application_activated.connect (() => {
+                List<File> files = new List<File> ();
+                files.prepend (fileToOpen);
+                appChooser.get_app_info ().launch (files, null);
+                window.destroy ();
+            });
+
+            window.add (appChooser);
+            window.show_all ();
+        }
+    }
 }

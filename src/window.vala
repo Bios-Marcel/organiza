@@ -44,16 +44,15 @@ namespace Organiza {
                 currentFolderHierarchy.clear ();
 
                 var directory = File.new_for_path (currentDirectory);
-
                 if ( currentDirectoryMonitor != null ) {
                     currentDirectoryMonitor.cancel ();
                 }
+
                 currentDirectoryMonitor = directory.monitor (FileMonitorFlags.NONE, null);
                 currentDirectoryMonitor.changed.connect ((src, dest, event) => {
                     // TODO Marcel: Might it be better if i only update the entry containg the file?
                     update_file_view ();
                 });
-
                 Gtk.TreeIter iter;
 
                 // If there is a parent-folder, we wan't to give the user the opportunity to navigate there per mouse, therefore we add an `..` item.
@@ -81,8 +80,8 @@ namespace Organiza {
 
                     currentFolderHierarchy.set (iter, 0, iconManager.get_pixbuf_icon (childFileInfo), 1, childFileInfo.get_name (), 2, fileSize);
                 }
-            } catch ( Error e ) {
-                stderr.printf ("Error: %s\n", e.message);
+            } catch ( Error error ) {
+                stderr.printf ("Error: %s\n", error.message);
             }
 
             select_first ();
@@ -95,7 +94,12 @@ namespace Organiza {
             if ( get_selected_file_name () == ".." ) {
                 navigate_up ();
             } else {
-                navigate_down ();
+                var selectedFile = get_selected_file ();
+                if ( selectedFile.query_file_type (FileQueryInfoFlags.NONE) == FileType.DIRECTORY ) {
+                    navigate_down ();
+                } else {
+                    FileUtil.open_file (selectedFile);
+                }
             }
         }
 
@@ -104,7 +108,9 @@ namespace Organiza {
                 navigate_up ();
                 return true;
             } else if ( event.keyval == Gdk.Key.Right ) {
-                if ( get_selected_file_name () != ".." ) {
+                var selectedFile = get_selected_file ();
+                if ( get_selected_file_name () != ".."
+                     && selectedFile.query_file_type (FileQueryInfoFlags.NONE) == FileType.DIRECTORY ) {
                     navigate_down ();
                     return true;
                 }
@@ -123,10 +129,8 @@ namespace Organiza {
 
         private void navigate_down() {
             var file = get_selected_file ();
-            if ( file.query_file_type (FileQueryInfoFlags.NONE) == FileType.DIRECTORY ) {
-                currentDirectory = currentDirectory + "/" + file.get_basename ();
-                update_file_view ();
-            }
+            currentDirectory = currentDirectory + Path.DIR_SEPARATOR_S + file.get_basename ();
+            update_file_view ();
         }
 
         private string ? get_selected_file_name () {
@@ -140,7 +144,7 @@ namespace Organiza {
         }
 
         private File ? get_selected_file () {
-            return File.new_for_path (currentDirectory + "/" + get_selected_file_name ());
+            return File.new_for_path (currentDirectory + Path.DIR_SEPARATOR_S + get_selected_file_name ());
         }
 
     }

@@ -21,8 +21,8 @@
     ],
 
     "todohighlight.defaultStyle": {
-        "color": "#000000",
-        "backgroundColor": "#FF0000",
+        "color": "#c94cc2",
+        "backgroundColor": "#55FFFF",
         "isWholeLine": false,
     },
 }
