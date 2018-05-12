@@ -7,7 +7,6 @@ namespace FileUtilTests {
 
             assert_equals (as_nerd_readable_file_size (-1), "");
             assert_equals (as_nerd_readable_file_size (-100), "");
-
             assert_equals (as_nerd_readable_file_size (0), "0 B");
             assert_equals (as_nerd_readable_file_size (1), "1 B");
             assert_equals (as_nerd_readable_file_size (2), "2 B");

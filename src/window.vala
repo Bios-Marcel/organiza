@@ -33,7 +33,7 @@ namespace Organiza {
 
         private void select_first() {
             Gtk.TreeIter iter;
-            if ( currentFolderHierarchy.get_iter_first (out iter) ) {
+            if ( currentFolderHierarchy.get_iter_first (out iter)) {
                 fileView.get_selection ().select_iter (iter);
                 fileView.grab_focus ();
             }
@@ -67,7 +67,7 @@ namespace Organiza {
                 var enumerator = directory.enumerate_children ("standard::*", FileQueryInfoFlags.NONE);
 
                 FileInfo childFileInfo;
-                while ( (childFileInfo = enumerator.next_file ()) != null ) {
+                while ((childFileInfo = enumerator.next_file ()) != null ) {
                     currentFolderHierarchy.append (out iter);
 
                     string fileSize;
@@ -129,7 +129,7 @@ namespace Organiza {
 
         private void navigate_down() {
             var file = get_selected_file ();
-            currentDirectory = currentDirectory + Path.DIR_SEPARATOR_S + file.get_basename ();
+            currentDirectory = currentDirectory + "/" + file.get_basename ();
             update_file_view ();
         }
 

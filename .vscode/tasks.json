@@ -2,27 +2,99 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "identifier": "ninja_build",
             "label": "Compile",
-            "group": "build",
-            "command": "ninja",
+            "type": "process",
+            "command": {
+                "quoting": "strong",
+                "value": "ninja"
+            },
             "args": [
-                "-Cbuild"
+                "-C",
+                "build"
             ],
+            "problemMatcher": [
+                {
+                    "base": "$valac",
+                    "fileLocation": [
+                        "relative",
+                        "${workspaceFolder}//"
+                    ],
+                }
+            ],
+            "isBackground": false,
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": true,
+                "panel": "shared"
+            },
+        },
+        {
+            "identifier": "ninja_test",
+            "label": "Test",
+            "type": "process",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "command": {
+                "quoting": "strong",
+                "value": "ninja"
+            },
+            "args": [
+                "-C",
+                "build",
+                "test"
+            ],
+            "isBackground": true,
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": true,
+                "panel": "shared"
+            },
+        },
+        {
+            "identifier": "infinitest",
+            "label": "Continueously test",
+            "type": "process",
+            "command": {
+                "quoting": "strong",
+                "value": "watchexec"
+            },
+            "args": [
+                "ninja -C build test",
+                "--exts",
+                "vala"
+            ],
+            "isBackground": true,
             "problemMatcher": {
-                "owner": "vala",
-                "fileLocation": [
-                    "relative",
-                    "${workspaceFolder}/src"
+                "owner": "infinitest",
+                "severity": "error",
+                "source": "infinitest",
+                "applyTo": "allDocuments",
+                "fileLocation": "absolute",
+                "pattern": [
+                    {
+                        //--- command ---
+                        //home/oliver/Projekte/Organiza/build/tests/fileutiltest
+                        //--- stdout ---
+                        ///fileutil/as_nerd_readable_file_size: FAIL
+                        "regexp": "^---.*$\\n(^.*$)\\n---.*$(^.*$)",
+                        "file": 1,
+                        "message": 2,
+                        "kind": "file",
+                    }
                 ],
-                "pattern": {
-                    "regexp": "^(.*?):(\\d+)[:\\.](\\d+)(?:-(\\d+)\\.(\\d+))?:\\s+(warning|error):\\s+(.*)$",
-                    "file": 1,
-                    "line": 2,
-                    "column": 3,
-                    "endLine": 4,
-                    "endColumn": 5,
-                    "severity": 6,
-                    "message": 7
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": {
+                        "regexp": "^ninja: Entering directory"
+                    },
+                    "endsPattern": {
+                        "regexp": "^Full log written to"
+                    }
                 }
             }
         },
@@ -37,9 +109,8 @@
                 "cwd": "${workspaceFolder}/build/src"
             },
             "dependsOn": [
-                "Compile"
-            ],
-            "problemMatcher": []
+                "ninja_build"
+            ]
         }
     ]
 }

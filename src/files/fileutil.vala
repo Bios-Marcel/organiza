@@ -62,7 +62,7 @@ namespace FileUtil {
      * @param file_size the file size in bytes, as reportes by GLib.
      *
      * @return a readable, consise formatting of the given file size. Will be empty
-     * if ``file_size`` is negative.
+     * if `file_size` is negative.
      */
     public string as_nerd_readable_file_size(int64 file_size) {
         if ( file_size < 0 ) {
@@ -126,7 +126,7 @@ namespace FileUtil {
                 var enumerator = file.enumerate_children ("standard::*", FileQueryInfoFlags.NOFOLLOW_SYMLINKS);
 
                 FileInfo childFileInfo;
-                while ( (childFileInfo = enumerator.next_file ()) != null ) {
+                while ((childFileInfo = enumerator.next_file ()) != null ) {
                     size += get_file_size (file.resolve_relative_path (childFileInfo.get_name ()));
                 }
 
@@ -165,4 +165,5 @@ namespace FileUtil {
             window.show_all ();
         }
     }
+
 }
