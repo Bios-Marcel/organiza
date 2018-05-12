@@ -1,5 +1,6 @@
 # Organiza
 [![CircleCI](https://circleci.com/gh/Bios-Marcel/Organiza/tree/master.svg?style=svg)](https://circleci.com/gh/Bios-Marcel/Organiza/tree/master)
+[![Build Status](https://travis-ci.org/Bios-Marcel/Organiza.svg?branch=master)](https://travis-ci.org/Bios-Marcel/Organiza)
 
 ## Description
 An attempt at writing a lightweight file manager for GTK3 using vala.
@@ -10,7 +11,7 @@ An attempt at writing a lightweight file manager for GTK3 using vala.
   > The plan is to not overload the UI, therefore not every action will have a clickable item on the UI, but be bound to a keyboard shortcut instead
 * Customizable keybindings
 * Minimal configuration possibilities (finding the best possible defaults, whereas best means most useful to as many people as possible)
-* Simple keybinding overview 
+* Simple keybinding overview
 * The usual stuff
   * Delete file(s)/folder(s)
   * Copy file(s)/folder(s)
