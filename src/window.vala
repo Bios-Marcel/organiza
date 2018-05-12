@@ -19,6 +19,40 @@ namespace Organiza {
             set_position (Gtk.WindowPosition.CENTER);
             set_default_size (700, 500);
             load_file_manager_icon ();
+
+            currentFolderHierarchy.set_sort_column_id (1, Gtk.SortType.ASCENDING);
+            currentFolderHierarchy.set_sort_func (1, (model, iterOne, iterTwo) => {
+                GLib.Value nameOne;
+                GLib.Value nameTwo;
+
+                model.get_value (iterOne, 1, out nameOne);
+                model.get_value (iterTwo, 1, out nameTwo);
+
+                string nameOneString = (string) nameOne;
+                string nameTwoString = (string) nameTwo;
+
+                // TODO Find out if this might this be a huge performance impact? Instead keep file-informations about entries and use those?
+                File fileOne = File.new_for_path (currentDirectory + Path.DIR_SEPARATOR_S + nameOneString);
+                File fileTwo = File.new_for_path (currentDirectory + Path.DIR_SEPARATOR_S + nameTwoString);
+                FileType fileTypeOne = fileOne.query_file_type (FileQueryInfoFlags.NONE);
+                FileType fileTypeTwo = fileTwo.query_file_type (FileQueryInfoFlags.NONE);
+
+                if ( fileTypeOne == FileType.DIRECTORY && fileTypeTwo != FileType.DIRECTORY ) {
+                    return -1;
+                }
+                if ( fileTypeTwo == FileType.DIRECTORY && fileTypeOne != FileType.DIRECTORY ) {
+                    return 1;
+                }
+
+                if ( nameOneString >= nameTwoString ) {
+                    return 1;
+                }
+                if ( nameOneString == nameTwoString ) {
+                    return 0;
+                }
+                return -1;
+            });
+
             update_file_view ();
             fileView.row_activated.connect (on_row_activated);
             fileView.key_press_event.connect (on_key_pressed);
@@ -104,20 +138,20 @@ namespace Organiza {
         }
 
         private bool on_key_pressed(Gtk.Widget widget, Gdk.EventKey event) {
-            switch(event.keyval) {
-                case Gdk.Key.Left: {
-                    navigate_up ();
+            switch ( event.keyval ) {
+            case Gdk.Key.Left: {
+                navigate_up ();
+                return true;
+            }
+            case Gdk.Key.Right: {
+                var selectedFile = get_selected_file ();
+                if ( get_selected_file_name () != ".."
+                     && selectedFile.query_file_type (FileQueryInfoFlags.NONE) == FileType.DIRECTORY ) {
+                    navigate_down ();
                     return true;
                 }
-                case Gdk.Key.Right: {
-                    var selectedFile = get_selected_file ();
-                    if ( get_selected_file_name () != ".."
-                         && selectedFile.query_file_type (FileQueryInfoFlags.NONE) == FileType.DIRECTORY ) {
-                        navigate_down ();
-                        return true;
-                    }
-                    return false;
-                }
+                return false;
+            }
             }
 
             return false;

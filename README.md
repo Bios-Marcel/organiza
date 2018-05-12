@@ -95,12 +95,15 @@ The executable file will be located at `build/src` and is called `organiza`.
 
 ### 0.0.2
 
-* [ ] Useful / non-annoying default sorting
-* [ ] Change sorting by clicking column headers
+* [x] Useful / non-annoying default sorting
 * [x] Jump to top by `POS1` and to bottom by `END`
 * [x] Open files
 * [ ] Create new files / folders
 * [ ] Overview of drives (a folder above `/` that shows all drives as list entries)
+
+### Future versions
+
+* [ ] Change sorting by clicking column headers
 
 ## How do I work on it best
 
@@ -111,3 +114,4 @@ For optimal experience install the following extensions:
 * [TODO Highlight](https://marketplace.visualstudio.com/items?itemName=wayou.vscode-todo-highlight)
 * [Uncrustify](https://marketplace.visualstudio.com/items?itemName=LaurentTreguier.uncrustify)
 * [Vala Code](https://marketplace.visualstudio.com/items?itemName=thiagoabreu.vala)
+* [EditorConfig](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig)
