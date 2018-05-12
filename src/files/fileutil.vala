@@ -115,7 +115,7 @@ namespace FileUtil {
     }
 
     /**
-     * Returns the size of a given file or or folder. In case the given file is a folder, the size will be calcualted recursively.
+     * Returns the size of a given file or or folder. In case the given file is a folder, the size will be calculated recursively.
      */
     public int64 get_file_size(File file) {
         try {
@@ -126,7 +126,7 @@ namespace FileUtil {
                 var enumerator = file.enumerate_children ("standard::*", FileQueryInfoFlags.NOFOLLOW_SYMLINKS);
 
                 FileInfo childFileInfo;
-                while ((childFileInfo = enumerator.next_file ()) != null ) {
+                while ( (childFileInfo = enumerator.next_file ()) != null ) {
                     size += get_file_size (file.resolve_relative_path (childFileInfo.get_name ()));
                 }
 
@@ -135,7 +135,7 @@ namespace FileUtil {
                 return fileInfo.get_size ();
             }
         } catch ( Error error ) {
-            warning (error.message);
+            warning ("Error retrieving filesize; Errormessage: %s\n", error.message);
             return 0;
         }
     }
@@ -144,26 +144,40 @@ namespace FileUtil {
         try {
             AppInfo.launch_default_for_uri (fileToOpen.get_uri (), null);
         } catch ( Error error ) {
-            stderr.printf ("Error opening file %s (%s)\n", fileToOpen.get_basename (), error.message);
-
-            FileInfo fileInfo = fileToOpen.query_info ("standard::*", FileQueryInfoFlags.NONE);
-            Gtk.AppChooserWidget appChooser = new Gtk.AppChooserWidget (fileInfo.get_content_type ());
-
-            appChooser.show_recommended = true;
-            appChooser.show_other = true;
-            appChooser.show_default = true;
-
-            var window = new Gtk.Window ();
-            appChooser.application_activated.connect (() => {
-                List<File> files = new List<File> ();
-                files.prepend (fileToOpen);
-                appChooser.get_app_info ().launch (files, null);
-                window.destroy ();
-            });
-
-            window.add (appChooser);
-            window.show_all ();
+            warning ("Error opening file %s (%s)\n", fileToOpen.get_basename (), error.message);
+            choose_application_and_open_file (fileToOpen);
         }
     }
 
+    private void choose_application_and_open_file(File fileToOpen) {
+        FileInfo fileInfo;
+        try {
+            fileInfo = fileToOpen.query_info ("standard::*", FileQueryInfoFlags.NONE);
+        } catch ( Error error ) {
+            critical ("Error querrying file info %s (%s)\n", fileToOpen.get_basename (), error.message);
+            return; //Early escape since we don't know the content type of the file.
+        }
+
+        Gtk.AppChooserWidget appChooser = new Gtk.AppChooserWidget (fileInfo.get_content_type ());
+
+        appChooser.show_recommended = true;
+        appChooser.show_other = true;
+        appChooser.show_default = true;
+
+        var window = new Gtk.Window ();
+        appChooser.application_activated.connect (() => {
+            List<File> files = new List<File> ();
+            files.prepend (fileToOpen);
+            try {
+                appChooser.get_app_info ().launch (files, null);
+            } catch ( Error error ) {
+                critical ("Error opening file '%s' with chosen AppInfo; Error message: %s\n", fileToOpen.get_basename (), error.message);
+            }
+
+            window.destroy ();
+        });
+
+        window.add (appChooser);
+        window.show_all ();
+    }
 }

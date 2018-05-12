@@ -97,8 +97,8 @@ The executable file will be located at `build/src` and is called `organiza`.
 
 * [ ] Useful / non-annoying default sorting
 * [ ] Change sorting by clicking column headers
-* [ ] Jump to top by `POS1` and to bottom by `END`
-* [ ] Open files
+* [x] Jump to top by `POS1` and to bottom by `END`
+* [x] Open files
 * [ ] Create new files / folders
 * [ ] Overview of drives (a folder above `/` that shows all drives as list entries)
 

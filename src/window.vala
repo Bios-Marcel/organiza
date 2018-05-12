@@ -33,7 +33,7 @@ namespace Organiza {
 
         private void select_first() {
             Gtk.TreeIter iter;
-            if ( currentFolderHierarchy.get_iter_first (out iter)) {
+            if ( currentFolderHierarchy.get_iter_first (out iter) ) {
                 fileView.get_selection ().select_iter (iter);
                 fileView.grab_focus ();
             }
@@ -67,7 +67,7 @@ namespace Organiza {
                 var enumerator = directory.enumerate_children ("standard::*", FileQueryInfoFlags.NONE);
 
                 FileInfo childFileInfo;
-                while ((childFileInfo = enumerator.next_file ()) != null ) {
+                while ( (childFileInfo = enumerator.next_file ()) != null ) {
                     currentFolderHierarchy.append (out iter);
 
                     string fileSize;
@@ -81,7 +81,7 @@ namespace Organiza {
                     currentFolderHierarchy.set (iter, 0, iconManager.get_pixbuf_icon (childFileInfo), 1, childFileInfo.get_name (), 2, fileSize);
                 }
             } catch ( Error error ) {
-                stderr.printf ("Error: %s\n", error.message);
+                critical ("Error updating fileview; Errormessage: %s\n", error.message);
             }
 
             select_first ();
@@ -104,15 +104,19 @@ namespace Organiza {
         }
 
         private bool on_key_pressed(Gtk.Widget widget, Gdk.EventKey event) {
-            if ( event.keyval == Gdk.Key.Left ) {
-                navigate_up ();
-                return true;
-            } else if ( event.keyval == Gdk.Key.Right ) {
-                var selectedFile = get_selected_file ();
-                if ( get_selected_file_name () != ".."
-                     && selectedFile.query_file_type (FileQueryInfoFlags.NONE) == FileType.DIRECTORY ) {
-                    navigate_down ();
+            switch(event.keyval) {
+                case Gdk.Key.Left: {
+                    navigate_up ();
                     return true;
+                }
+                case Gdk.Key.Right: {
+                    var selectedFile = get_selected_file ();
+                    if ( get_selected_file_name () != ".."
+                         && selectedFile.query_file_type (FileQueryInfoFlags.NONE) == FileType.DIRECTORY ) {
+                        navigate_down ();
+                        return true;
+                    }
+                    return false;
                 }
             }
 
