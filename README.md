@@ -1,11 +1,14 @@
 # Organiza
+
 [![CircleCI](https://circleci.com/gh/Bios-Marcel/Organiza/tree/master.svg?style=svg)](https://circleci.com/gh/Bios-Marcel/Organiza/tree/master)
 [![Build Status](https://travis-ci.org/Bios-Marcel/Organiza.svg?branch=master)](https://travis-ci.org/Bios-Marcel/Organiza)
 
 ## Description
+
 An attempt at writing a lightweight file manager for GTK3 using vala.
 
 ## Goals
+
 * Focus on keyboard navigation
 * Lightweight UI
   > The plan is to not overload the UI, therefore not every action will have a clickable item on the UI, but be bound to a keyboard shortcut instead
@@ -39,22 +42,28 @@ Those can be found in [`meson.build` located at `/src`](https://github.com/Bios-
 After downloading necessary dependencies you have to do the following:
 
 1. Navigate into the root folder
-```bash
+
+```sh
 cd /path/to/Organiza/
 ```
+
 2. Create and configure the build directory
-```bash
+
+```sh
 meson build
 ```
+
 3. Start the build using the previously created build-directory
-```bash
+
+```sh
 ninja -Cbuild
 ```
 
 or
 
 3. Use `ninja`s `install` command
-```
+
+```sh
 sudo ninja install
 ```
 
@@ -63,27 +72,38 @@ The executable file will be located at `build/src` and is called `organiza`.
 ## Roadmap
 
 ### 0.0.1
+
 #### Application
-- [x] Displaying the file hierarchy
-- [x] Navigation by mouse and keyboard
-  - [x] Up and down by keyboard
-  - [x] Up and down by mouse
-- [x] React to file changes and update ui
+
+* [x] Displaying the file hierarchy
+* [x] Navigation by mouse and keyboard
+  * [x] Up and down by keyboard
+  * [x] Up and down by mouse
+* [x] React to file changes and update ui
+
 #### Development
-- [x] Run build on commit
-- [x] Unit tests
-  - [x] Build Integration
+
+* [x] Run build on commit
+* [x] Unit tests
+  * [x] Build Integration
+  * [ ] Linting
+    * [x] Vala
+    * [x] appstream
+    * [x] desktop file
+    * [x] schema
+    * [ ] gettext
 
 ### 0.0.2
 
-- [ ] Useful / non-annoying default sorting
-- [ ] Change sorting by clicking column headers
-- [ ] Jump to top by `POS1` and to bottom by `END`
-- [ ] Open files
-- [ ] Create new files / folders
-- [ ] Overview of drives (a folder above `/` that shows all drives as list entries)
+* [ ] Useful / non-annoying default sorting
+* [ ] Change sorting by clicking column headers
+* [ ] Jump to top by `POS1` and to bottom by `END`
+* [ ] Open files
+* [ ] Create new files / folders
+* [ ] Overview of drives (a folder above `/` that shows all drives as list entries)
 
-## How do i work on it best?
+## How do I work on it best
+
 ### Visual Studio Code
 
 For optimal experience install the following extensions:
