@@ -153,6 +153,7 @@ namespace FileUtil {
             appChooser.show_other = true;
             appChooser.show_default = true;
 
+            var window = new Gtk.Window ();
             appChooser.application_activated.connect (() => {
                 List<File> files = new List<File> ();
                 files.prepend (fileToOpen);
@@ -160,7 +161,6 @@ namespace FileUtil {
                 window.destroy ();
             });
 
-            var window = new Gtk.Window ();
             window.add (appChooser);
             window.show_all ();
         }

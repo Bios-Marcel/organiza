@@ -103,7 +103,7 @@ namespace Organiza {
             }
         }
 
-        private bool on_key_pressed(Gtk.appChooser appChooser, Gdk.EventKey event) {
+        private bool on_key_pressed(Gtk.Widget widget, Gdk.EventKey event) {
             if ( event.keyval == Gdk.Key.Left ) {
                 navigate_up ();
                 return true;
