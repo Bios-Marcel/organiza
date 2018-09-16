@@ -8,6 +8,7 @@ namespace Organiza {
         [GtkChild]
         Gtk.ListStore currentFolderHierarchy;
 
+        ViewController currentViewController = new ViewController ();
         string currentDirectory = "/";
         FileMonitor ? currentDirectoryMonitor;
 
@@ -139,19 +140,19 @@ namespace Organiza {
 
         private bool on_key_pressed(Gtk.Widget widget, Gdk.EventKey event) {
             switch ( event.keyval ) {
-            case Gdk.Key.Left: {
-                navigate_up ();
-                return true;
-            }
-            case Gdk.Key.Right: {
-                var selectedFile = get_selected_file ();
-                if ( get_selected_file_name () != ".."
-                     && selectedFile.query_file_type (FileQueryInfoFlags.NONE) == FileType.DIRECTORY ) {
-                    navigate_down ();
+                case Gdk.Key.Left: {
+                    navigate_up ();
                     return true;
                 }
-                return false;
-            }
+                case Gdk.Key.Right: {
+                    var selectedFile = get_selected_file ();
+                    if ( get_selected_file_name () != ".."
+                         && selectedFile.query_file_type (FileQueryInfoFlags.NONE) == FileType.DIRECTORY ) {
+                        navigate_down ();
+                        return true;
+                    }
+                    return false;
+                }
             }
 
             return false;
