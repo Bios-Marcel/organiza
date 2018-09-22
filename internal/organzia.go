@@ -27,7 +27,7 @@ func Start() {
 			path = "/"
 		}
 
-		filePane := gui.CreateFilePane(path)
+		filePane := gui.CreateFilePane(&window.Window, path)
 
 		layout, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 10)
 		layout.Add(filePane.GetRootWidget())
@@ -40,7 +40,7 @@ func Start() {
 				keyVal := keyEvent.KeyVal()
 
 				if keyVal == gdk.KEY_N {
-					filePaneNew := gui.CreateFilePane("/")
+					filePaneNew := gui.CreateFilePane(&window.Window, "/")
 					layout.Add(filePaneNew.GetRootWidget())
 					filePaneNew.GetRootWidget().ShowAll()
 				}

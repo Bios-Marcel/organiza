@@ -65,7 +65,7 @@ func GetApplicationIcon() *gdk.Pixbuf {
 	if iconThemeRetrievalError != nil {
 		return nil
 	}
-	icon, iconLoadError := iconTheme.LoadIcon("system-file-manager", 48, 0)
+	icon, iconLoadError := iconTheme.LoadIcon("system-file-manager", 24, 0)
 	if iconLoadError != nil {
 		return nil
 	}

@@ -1,12 +1,14 @@
 package gui
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 
 	"github.com/Bios-Marcel/Organiza/internal/files"
+	"github.com/Bios-Marcel/wastebasket"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -14,6 +16,8 @@ import (
 
 //FilePane is the representation of the TreeView that represents the folder hierarchy.
 type FilePane struct {
+	parentWindow *gtk.Window
+
 	rootWidget *gtk.Widget
 
 	currentDirectory string
@@ -29,7 +33,7 @@ const (
 )
 
 //CreateFilePane creates a FilePane with the given path as its default path.
-func CreateFilePane(path string) *FilePane {
+func CreateFilePane(parentWindow *gtk.Window, path string) *FilePane {
 	var hAdjustment, vAdjustment *gtk.Adjustment
 	scrollPane, _ := gtk.ScrolledWindowNew(hAdjustment, vAdjustment)
 
@@ -48,19 +52,34 @@ func CreateFilePane(path string) *FilePane {
 	scrollPane.SetHExpand(true)
 
 	filePane := FilePane{
+		parentWindow: parentWindow,
+
 		rootWidget: &scrollPane.Widget,
-		treeModel:  treeModel,
-		fileTree:   fileTree,
+
+		treeModel: treeModel,
+		fileTree:  fileTree,
 	}
 	filePane.SetPath(path)
 
+	//HACK Not cool, as I can't ask the selection instantly
 	fileTree.Connect("button-press-event", func(treeView *gtk.TreeView, event *gdk.Event) {
 		buttonEvent := gdk.EventButtonNewFromEvent(event)
-		if buttonEvent.ButtonVal() == 3 {
-			menu := createFileContextMenu(&filePane)
-			menu.ShowAll()
-			menu.PopupAtPointer(event)
+
+		//Only rightclick; There seems to be no constant...
+		if buttonEvent.ButtonVal() != 3 {
+			return
 		}
+
+		//TODO Currently doesn't work, as this is merely a hack anyway.
+		//Only if there is any selection
+		/*selection, _ := filePane.fileTree.GetSelection()
+		if selection.CountSelectedRows() <= 0 {
+			return
+		}*/
+
+		menu := createFileContextMenu(&filePane)
+		menu.ShowAll()
+		menu.PopupAtPointer(event)
 	})
 	fileTree.Connect("row-activated", func() {
 		filePane.handleRowActivation()
@@ -89,12 +108,28 @@ func createFileContextMenu(filePane *FilePane) *gtk.Menu {
 		if filePane.isSelectedFileADirectory() {
 			filePane.SetPath(fullpath)
 		} else {
-			files.OpenFile(fullpath)
+			files.OpenFile(filePane.parentWindow, fullpath)
 		}
+	})
+
+	deleteToTrashbinItem, _ := gtk.MenuItemNewWithLabel("Delete to trashbin")
+	deleteToTrashbinItem.Connect("activate", func() {
+
+		basename, fullpath := filePane.getSelectedFile()
+		message := fmt.Sprintf("Do you really want to move the file '%s' into the trashbin?", basename)
+		deleteToTrashbinQuestion := gtk.MessageDialogNew(filePane.parentWindow, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, message)
+		if deleteToTrashbinQuestion.Run() == gtk.RESPONSE_YES {
+			wastebasket.Trash(fullpath)
+		}
+
+		deleteToTrashbinQuestion.Destroy()
 	})
 
 	menu, _ := gtk.MenuNew()
 	menu.Append(openItem)
+	separatorOne, _ := gtk.SeparatorMenuItemNew()
+	menu.Append(separatorOne)
+	menu.Append(deleteToTrashbinItem)
 
 	/*openWithItem, _ := gtk.MenuItemNewWithLabel("Open with...")
 	openWithItem.Connect("activate", func() {
@@ -152,7 +187,7 @@ func (filePane *FilePane) handleRowActivation() {
 	if fileInfo.IsDir() {
 		filePane.SetPath(selectedFileFullpath)
 	} else {
-		files.OpenFile(selectedFileFullpath)
+		files.OpenFile(filePane.parentWindow, selectedFileFullpath)
 	}
 }
 

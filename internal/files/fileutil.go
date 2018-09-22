@@ -67,24 +67,24 @@ func ToHumanReadableFileSize(fileSize int64) string {
 	return humanReadableString
 }
 
-func OpenFile(file string) {
+func OpenFile(parentWindow *gtk.Window, file string) {
 	errorOpeningFile := open.Start(file)
 	if errorOpeningFile != nil {
-		displayCouldntOpenDialog(errorOpeningFile)
+		displayCouldntOpenDialog(parentWindow, errorOpeningFile)
 	}
 }
 
-func OpenFileWith(file string, with string) {
+func OpenFileWith(parentWindow *gtk.Window, file string, with string) {
 	errorOpeningFile := open.StartWith(file, with)
 	if errorOpeningFile != nil {
-		displayCouldntOpenDialog(errorOpeningFile)
+		displayCouldntOpenDialog(parentWindow, errorOpeningFile)
 	}
 }
 
-func displayCouldntOpenDialog(errorOpeningFile error) {
+func displayCouldntOpenDialog(parentWindow *gtk.Window, errorOpeningFile error) {
 	//TODO Pass parent window
 	message := fmt.Sprintf("Error opening file (%s)", errorOpeningFile.Error())
-	openFileErrorDialog := gtk.MessageDialogNew(nil, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, message)
+	openFileErrorDialog := gtk.MessageDialogNew(parentWindow, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, message)
 	openFileErrorDialog.Run()
 	openFileErrorDialog.Destroy()
 }
