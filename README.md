@@ -56,7 +56,6 @@ cd /path/to/Organiza/build  #Navigate into project directory
 sudo ninja install          #Intall application on your system
 ```
 
-
 ## Roadmap
 
 ### 0.0.1
