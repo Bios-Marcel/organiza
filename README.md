@@ -41,33 +41,21 @@ Those can be found in [`meson.build` located at `/src`](https://github.com/Bios-
 
 After downloading necessary dependencies you have to do the following:
 
-1. Navigate into the root folder
-
 ```sh
-cd /path/to/Organiza/
-```
-
-2. Create and configure the build directory
-
-```sh
-meson build
-```
-
-3. Start the build using the previously created build-directory
-
-```sh
-ninja -Cbuild
-```
-
-or
-
-3. Use `ninja`s `install` command
-
-```sh
-sudo ninja install
+cd /path/to/Organiza/  #Navigate into project directory
+meson build            #Create and configure build folder at ./build
+ninja -Cbuild          #Compile using the previously created buildfolder
 ```
 
 The executable file will be located at `build/src` and is called `organiza`.
+
+Alternatively you can also install the binary using:
+
+```sh
+cd /path/to/Organiza/build  #Navigate into project directory
+sudo ninja install          #Intall application on your system
+```
+
 
 ## Roadmap
 
@@ -98,11 +86,15 @@ The executable file will be located at `build/src` and is called `organiza`.
 * [x] Useful / non-annoying default sorting
 * [x] Jump to top by `POS1` and to bottom by `END`
 * [x] Open files
+* [X] Multi pane feature
 * [ ] Create new files / folders
-* [ ] Overview of drives (a folder above `/` that shows all drives as list entries)
+* [ ] Delete files
+* [ ] Context menus for files and folders (open, open with, create and delete for now)
 
 ### Future versions
 
+* [ ] Drag and Drop between file panes
+* [ ] Overview of drives (a folder above `/` that shows all drives as list entries)
 * [ ] Change sorting by clicking column headers
 
 ## How do I work on it best
