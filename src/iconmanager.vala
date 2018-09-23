@@ -8,12 +8,12 @@ class IconManager {
 
     /**
      * Loads and returns the icon which the current icon theme uses for the given FileInfo.
-     * 
+     *
      * If the icon has already been loaded at some point we will retrieve it from our cache and return it.
      * In case the icon hasn't already been loaded, we will look it up, load it, add it to the cache and then return it.
-     * 
+     *
      * @param info the FileInfo to retrieve the icon for
-     * 
+     *
      * @return the retrieved icon or ``null``
      */
     public Gdk.Pixbuf ? get_pixbuf_icon (FileInfo info) {

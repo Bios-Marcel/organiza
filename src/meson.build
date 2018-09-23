@@ -1,7 +1,8 @@
 # These sources are shared with the main application and unit tests.
 organiza_sources = files([
   'files/fileutil.vala',
-  'gui/iconmanager.vala',
+  'filepane.vala',
+  'iconmanager.vala',
   'window.vala',
 ])
 

@@ -2,5 +2,6 @@
 <gresources>
   <gresource prefix="/org/organiza/Organiza">
     <file>window.ui</file>
+    <file>filepane.ui</file>
   </gresource>
 </gresources>

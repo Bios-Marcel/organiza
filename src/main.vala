@@ -4,9 +4,9 @@ int main(string[] args) {
     app.activate.connect (() => {
         var win = app.active_window;
         if ( win == null ) {
-            win = new Organiza.Window (app);
+            win = new Window (app);
         }
-        win.present ();
+        win.show_all ();
     });
 
     return app.run (args);
