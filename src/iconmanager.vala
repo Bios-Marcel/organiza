@@ -4,7 +4,7 @@ class IconManager {
 
     // TODO Marcel: I'd prefer using Icon.hash () over Icon.to_string (); Find out how to use uint properly in HashTable
     // Used for caching icons in order to decrease loading time when switching folders
-    HashTable<string, Gdk.Pixbuf> iconCache = new HashTable<string, Gdk.Pixbuf>(str_hash, str_equal);
+    HashTable<string, Gdk.Pixbuf> iconCache = new HashTable<string, Gdk.Pixbuf> (str_hash, str_equal);
 
     /**
      * Loads and returns the icon which the current icon theme uses for the given FileInfo.

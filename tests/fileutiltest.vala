@@ -2,7 +2,7 @@ namespace FileUtilTests {
     using Test;
     using FileUtil;
 
-    void add_tests() {
+    void add_tests () {
         Test.add_func ("/fileutil/as_nerd_readable_file_size", () => {
 
             assert_equals (as_nerd_readable_file_size (-1), "");
@@ -55,7 +55,7 @@ namespace FileUtilTests {
         });
     }
 
-    inline void assert_equals(string actual, string expected) {
+    inline void assert_equals (string actual, string expected) {
         if ( expected == actual ) {
             // in case of vala black magic, pass check expression again:
             assert (expected == actual);
@@ -67,7 +67,7 @@ namespace FileUtilTests {
         }
     }
 
-    void main(string[] args) {
+    void main (string[] args) {
         Test.init (ref args);
         add_tests ();
         Test.run ();
