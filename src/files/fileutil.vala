@@ -64,7 +64,7 @@ namespace FileUtil {
      * @return a readable, consise formatting of the given file size. Will be empty
      * if `file_size` is negative.
      */
-    public string as_nerd_readable_file_size(int64 file_size) {
+    public string as_nerd_readable_file_size (int64 file_size) {
         if ( file_size < 0 ) {
             // what does a negative file size even mean?
             // obviously, FileInfo.get_size mentions none of it...
@@ -117,7 +117,7 @@ namespace FileUtil {
     /**
      * Returns the size of a given file or or folder. In case the given file is a folder, the size will be calculated recursively.
      */
-    public int64 get_file_size(File file) {
+    public int64 get_file_size (File file) {
         try {
             FileInfo fileInfo = file.query_info ("standard::*", FileQueryInfoFlags.NONE);
             if ( fileInfo.get_file_type () == FileType.DIRECTORY ) {
@@ -140,7 +140,7 @@ namespace FileUtil {
         }
     }
 
-    public void open_file(File fileToOpen) {
+    public void open_file (File fileToOpen) {
         try {
             AppInfo.launch_default_for_uri (fileToOpen.get_uri (), null);
         } catch ( Error error ) {
@@ -149,13 +149,13 @@ namespace FileUtil {
         }
     }
 
-    private void choose_application_and_open_file(File fileToOpen) {
+    private void choose_application_and_open_file (File fileToOpen) {
         FileInfo fileInfo;
         try {
             fileInfo = fileToOpen.query_info ("standard::*", FileQueryInfoFlags.NONE);
         } catch ( Error error ) {
             critical ("Error querrying file info %s (%s)\n", fileToOpen.get_basename (), error.message);
-            return; //Early escape since we don't know the content type of the file.
+            return; // Early escape since we don't know the content type of the file.
         }
 
         Gtk.AppChooserWidget appChooser = new Gtk.AppChooserWidget (fileInfo.get_content_type ());
@@ -180,4 +180,5 @@ namespace FileUtil {
         window.add (appChooser);
         window.show_all ();
     }
+
 }

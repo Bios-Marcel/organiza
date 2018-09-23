@@ -20,7 +20,7 @@ class Window : Gtk.ApplicationWindow {
         filePaneContainer.add (filePane);
     }
 
-    public bool new_file_pane_handler(Gdk.EventKey event) {
+    public bool new_file_pane_handler (Gdk.EventKey event) {
         var ctrlAndShift = Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK;
         if ( (event.state & ctrlAndShift) != ctrlAndShift ) {
             return false;
@@ -37,7 +37,7 @@ class Window : Gtk.ApplicationWindow {
         return false;
     }
 
-    private void load_file_manager_icon() {
+    private void load_file_manager_icon () {
         var appIcon = iconManager.get_application_icon ();
         if ( appIcon != null ) {
             icon = appIcon;

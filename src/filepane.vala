@@ -55,7 +55,7 @@ class FilePane : Gtk.ScrolledWindow {
         fileView.key_press_event.connect (on_key_pressed);
     }
 
-    private bool delete_file_pane_handler(Gdk.EventKey event) {
+    private bool delete_file_pane_handler (Gdk.EventKey event) {
         var ctrlAndShift = Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK;
         if ( (event.state & ctrlAndShift) != ctrlAndShift ) {
             return false;
@@ -70,7 +70,7 @@ class FilePane : Gtk.ScrolledWindow {
         return false;
     }
 
-    private void select_first() {
+    private void select_first () {
         Gtk.TreeIter iter;
         if ( fileTree.get_iter_first (out iter) ) {
             fileView.get_selection ().select_iter (iter);
@@ -78,7 +78,7 @@ class FilePane : Gtk.ScrolledWindow {
         }
     }
 
-    private void update_file_view() {
+    private void update_file_view () {
         try {
             fileTree.clear ();
 
@@ -129,7 +129,7 @@ class FilePane : Gtk.ScrolledWindow {
     /**
      * Handles leftclicks in the fileView.
      */
-    private void on_row_activated(Gtk.TreeView treeview, Gtk.TreePath path, Gtk.TreeViewColumn column) {
+    private void on_row_activated (Gtk.TreeView treeview, Gtk.TreePath path, Gtk.TreeViewColumn column) {
         if ( get_selected_file_name () == ".." ) {
             navigate_up ();
         } else {
@@ -142,7 +142,7 @@ class FilePane : Gtk.ScrolledWindow {
         }
     }
 
-    private bool on_key_pressed(Gtk.Widget widget, Gdk.EventKey event) {
+    private bool on_key_pressed (Gtk.Widget widget, Gdk.EventKey event) {
         switch ( event.keyval ) {
             case Gdk.Key.Left: {
                 navigate_up ();
@@ -162,7 +162,7 @@ class FilePane : Gtk.ScrolledWindow {
         return false;
     }
 
-    private void navigate_up() {
+    private void navigate_up () {
         var parentFolder = File.new_for_path (currentDirectory).get_parent ();
         if ( parentFolder != null ) {
             currentDirectory = parentFolder.get_path ();
@@ -170,7 +170,7 @@ class FilePane : Gtk.ScrolledWindow {
         }
     }
 
-    private void navigate_down() {
+    private void navigate_down () {
         var file = get_selected_file ();
         currentDirectory = currentDirectory + "/" + file.get_basename ();
         update_file_view ();
