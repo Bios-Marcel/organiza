@@ -1,18 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.22.1 -->
 <interface>
+  <requires lib="gtk+" version="3.10"/>
   <template class="Window" parent="GtkApplicationWindow">
+    <property name="can_focus">False</property>
     <child type="titlebar">
       <object class="GtkHeaderBar" id="header_bar">
-        <property name="visible">true</property>
-        <property name="show-close-button">True</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
         <property name="title">Organiza</property>
+        <property name="show_close_button">True</property>
       </object>
     </child>
     <child>
-      <object class="GtkBox" id="filePaneContainer">
-        <property name="vexpand">True</property>
-        <property name="hexpand">True</property>
-        <property name="spacing">10</property>
+      <object class="GtkPaned" id="rootLayout">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkBox" id="filePaneContainer">
+            <property name="can_focus">False</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+            <property name="spacing">10</property>
+          </object>
+          <packing>
+            <property name="resize">True</property>
+            <property name="shrink">True</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
       </object>
     </child>
   </template>
