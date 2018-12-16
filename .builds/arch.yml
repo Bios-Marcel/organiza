@@ -1,0 +1,12 @@
+image: archlinux
+packages:
+  - gtk3
+  - vte3
+  - meson
+  - vala
+tasks:
+  - setup: |
+      git clone https://github.com/Bios-Marcel/Organiza
+      cd Organiza
+      meson build
+      ninja -Cbuild
