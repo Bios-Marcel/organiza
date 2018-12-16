@@ -1,7 +1,6 @@
 # Organiza
 
-[![CircleCI](https://circleci.com/gh/Bios-Marcel/Organiza/tree/master.svg?style=svg)](https://circleci.com/gh/Bios-Marcel/Organiza/tree/master)
-[![Build Status](https://travis-ci.org/Bios-Marcel/Organiza.svg?branch=master)](https://travis-ci.org/Bios-Marcel/Organiza)
+[![builds.sr.ht status](https://builds.sr.ht/~biosmarcel/Organiza/arch.yml.svg)](https://builds.sr.ht/~biosmarcel/Organiza/arch.yml?)
 
 ## Description
 
