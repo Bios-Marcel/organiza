@@ -9,4 +9,4 @@ tasks:
       git clone https://github.com/Bios-Marcel/Organiza
       cd Organiza
       meson build
-      ninja -Cbuild
+      ninja -Cbuild test

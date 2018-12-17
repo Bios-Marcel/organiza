@@ -71,13 +71,11 @@ sudo ninja install          #Intall application on your system
 
 * [x] Run build on commit
 * [x] Unit tests
-  * [x] Build Integration
-  * [ ] Linting
+  * Build Integration
     * [x] Vala
     * [x] appstream
     * [x] desktop file
     * [x] schema
-    * [ ] gettext
 
 ### 0.0.2
 
@@ -97,9 +95,9 @@ sudo ninja install          #Intall application on your system
 
 ## How do I work on it best
 
-### Visual Studio Code
+I suggest you use VS Code, as that is what I am using.
 
-For optimal experience install the following extensions:
+For an optimal experience install the following extensions:
 
 * [TODO Highlight](https://marketplace.visualstudio.com/items?itemName=wayou.vscode-todo-highlight)
 * [Uncrustify](https://marketplace.visualstudio.com/items?itemName=LaurentTreguier.uncrustify)
