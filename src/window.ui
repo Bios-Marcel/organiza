@@ -15,7 +15,7 @@
     <child>
       <object class="GtkPaned" id="rootLayout">
         <property name="visible">True</property>
-        <property name="can_focus">True</property>
+        <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkBox" id="filePaneContainer">

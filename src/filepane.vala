@@ -15,6 +15,11 @@ class FilePane : Gtk.ScrolledWindow {
     public FilePane (IconManager iconManager, string directory) {
         this.iconManager = iconManager;
 
+        fileView.popup_menu.connect (() => {
+            // TODO Is necessary for shift + f10 and the "context menu"-key to work
+            return false;
+        });
+
         key_press_event.connect (delete_file_pane_handler);
 
         fileTree.set_sort_column_id (1, Gtk.SortType.ASCENDING);
@@ -55,9 +60,13 @@ class FilePane : Gtk.ScrolledWindow {
         fileView.key_press_event.connect (on_key_pressed);
     }
 
+    public override void grab_focus () {
+        fileView.grab_focus ();
+    }
+
     private bool delete_file_pane_handler (Gdk.EventKey event) {
         var ctrlAndShift = Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK;
-        if ( (event.state & ctrlAndShift) != ctrlAndShift ) {
+        if ((event.state & ctrlAndShift) != ctrlAndShift ) {
             return false;
         }
 
@@ -72,7 +81,7 @@ class FilePane : Gtk.ScrolledWindow {
 
     private void select_first () {
         Gtk.TreeIter iter;
-        if ( fileTree.get_iter_first (out iter) ) {
+        if ( fileTree.get_iter_first (out iter)) {
             fileView.get_selection ().select_iter (iter);
             fileView.grab_focus ();
         }
@@ -106,7 +115,7 @@ class FilePane : Gtk.ScrolledWindow {
             var enumerator = directory.enumerate_children ("standard::*", FileQueryInfoFlags.NONE);
 
             FileInfo childFileInfo;
-            while ( (childFileInfo = enumerator.next_file ()) != null ) {
+            while ((childFileInfo = enumerator.next_file ()) != null ) {
                 fileTree.append (out iter);
 
                 string fileSize;
@@ -186,7 +195,7 @@ class FilePane : Gtk.ScrolledWindow {
         return name;
     }
 
-    private File ? get_selected_file () {
+    public File ? get_selected_file () {
         return File.new_for_path (currentDirectory + Path.DIR_SEPARATOR_S + get_selected_file_name ());
     }
 }
