@@ -24,5 +24,15 @@
     },
     // Constantly format code
     "editor.formatOnSave": true,
-    "editor.formatOnType": true
+    "editor.formatOnType": true,
+    "spellright.language": [
+        "de_DE",
+        "en_GB",
+        "en_US"
+    ],
+    "spellright.documentTypes": [
+        "latex",
+        "plaintext",
+        "markdown"
+    ]
 }
