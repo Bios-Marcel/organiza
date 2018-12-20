@@ -3,14 +3,14 @@ using FileUtil;
 [GtkTemplate (ui = "/org/organiza/Organiza/filepane.ui")]
 class FilePane : Gtk.ScrolledWindow {
     [GtkChild]
-    Gtk.TreeView fileView;
+    private Gtk.TreeView fileView;
     [GtkChild]
-    Gtk.ListStore fileTree;
+    private Gtk.ListStore fileTree;
 
-    string currentDirectory = "/";
-    FileMonitor ? currentDirectoryMonitor;
+    private string currentDirectory = "/";
+    private FileMonitor ? currentDirectoryMonitor;
 
-    IconManager iconManager;
+    private IconManager iconManager;
 
     public FilePane (IconManager iconManager, string directory) {
         this.iconManager = iconManager;
@@ -65,6 +65,7 @@ class FilePane : Gtk.ScrolledWindow {
     }
 
     private bool delete_file_pane_handler (Gdk.EventKey event) {
+        // TODO Replace with CSS
         var ctrlAndShift = Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK;
         if ((event.state & ctrlAndShift) != ctrlAndShift ) {
             return false;
@@ -171,6 +172,10 @@ class FilePane : Gtk.ScrolledWindow {
         return false;
     }
 
+    public string get_current_folder () {
+        return currentDirectory;
+    }
+
     private void navigate_up () {
         var parentFolder = File.new_for_path (currentDirectory).get_parent ();
         if ( parentFolder != null ) {
@@ -181,7 +186,7 @@ class FilePane : Gtk.ScrolledWindow {
 
     private void navigate_down () {
         var file = get_selected_file ();
-        currentDirectory = currentDirectory + "/" + file.get_basename ();
+        currentDirectory = currentDirectory + file.get_basename () + "/";
         update_file_view ();
     }
 

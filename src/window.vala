@@ -1,16 +1,5 @@
 using FileUtil;
 
-/*delegate void VoidFunc ();
-
-   class VoidFuncData {
-    public VoidFunc func;
-
-    public VoidFuncData (owned VoidFunc func) {
-        this.func = (owned) func;
-    }
-
-   }*/
-
 [GtkTemplate (ui = "/org/organiza/Organiza/window.ui")]
 public class Window : Gtk.ApplicationWindow {
     [GtkChild]
@@ -26,6 +15,9 @@ public class Window : Gtk.ApplicationWindow {
 
     [Signal (action = true)]
     public signal void focus_terminal ();
+
+    [Signal (action = true)]
+    public signal void sync_wd ();
 
     IconManager iconManager = new IconManager ();
 
@@ -53,13 +45,23 @@ public class Window : Gtk.ApplicationWindow {
         load_css ("org/organiza/Organiza/key-bindings.css");
         key_press_event.connect (new_file_pane_handler);
 
-        // key_release_event.connect (focus_request_handler);
-
         terminal = new Terminal (this);
+
+        // TODO: Doesn't quite work yet.
+        // sync_wd.connect (() => {
+        // terminal.feed_child (@"cd $(get_dir_of_selected_file_pane())".to_utf8 ());
+        // });
+
         rootLayout.add (terminal);
 
         var filePane = new FilePane (iconManager, "/");
         filePaneContainer.add (filePane);
+    }
+
+    private string ? get_dir_of_selected_file_pane () {
+        Gtk.Widget pane = (filePaneContainer.get_focus_child () as FilePane);
+
+        return (pane as FilePane).get_current_folder ();
     }
 
     private void load_css (string resource_path) {
@@ -80,6 +82,8 @@ public class Window : Gtk.ApplicationWindow {
 
         return null;
     }
+
+
 
     public bool new_file_pane_handler (Gdk.EventKey event) {
         var ctrlAndShift = Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK;
