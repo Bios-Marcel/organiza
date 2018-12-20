@@ -4,6 +4,7 @@ organiza_sources = files([
   'filepane.vala',
   'iconmanager.vala',
   'window.vala',
+  'terminal.vala'
 ])
 
 organiza_main = files('main.vala')
