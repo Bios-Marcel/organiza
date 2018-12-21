@@ -1,4 +1,4 @@
-@binding-set MainWindowBindings
+@binding-set PaneFocusBindings
 {
     bind "F1" { "focus_pane" (0) };
     bind "F2" { "focus_pane" (1) };
@@ -12,14 +12,19 @@
     bind "F10" { "focus_pane" (9) };
     bind "F11" { "focus_pane" (10) };
     bind "F12" { "focus_pane" (11) };
+}
 
+@binding-set OtherBindings
+{
+    bind "<Ctrl>S" { "sync_wd" () };
+    
     bind "<Ctrl>less" { "focus_terminal" () };
 }
 
 main-window {
-    -gtk-key-bindings: MainWindowBindings;
+    -gtk-key-bindings: PaneFocusBindings, OtherBindings;
 }
 
 main-window-terminal {
-    -gtk-key-bindings: MainWindowBindings;
+    -gtk-key-bindings: PaneFocusBindings;
 }
