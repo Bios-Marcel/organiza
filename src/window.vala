@@ -47,10 +47,10 @@ public class Window : Gtk.ApplicationWindow {
 
         terminal = new Terminal (this);
 
-        // TODO: Doesn't quite work yet.
-        // sync_wd.connect (() => {
-        // terminal.feed_child (@"cd $(get_dir_of_selected_file_pane())".to_utf8 ());
-        // });
+        sync_wd.connect (() => {
+            terminal.feed_child (@"cd $(get_dir_of_selected_file_pane())".to_utf8 ());
+            terminal.grab_focus ();
+        });
 
         rootLayout.add (terminal);
 
