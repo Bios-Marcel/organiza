@@ -33,7 +33,7 @@ class IconManager {
             // by now pixbuf will be non-null and cached.
             return pixbuf;
         } catch ( Error error ) {
-            stderr.printf ("Error retrieving icon for file: %s\n", info.get_name ());
+            critical ("Error retrieving icon for file: %s\n", info.get_name ());
             return null;
         }
     }
