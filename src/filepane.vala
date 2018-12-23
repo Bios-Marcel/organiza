@@ -177,6 +177,10 @@ class FilePane : Gtk.ScrolledWindow {
 
     private void navigate_down_handler_unsafe () {
         var file = get_selected_file ();
+        if ( !currentDirectory.has_suffix ("/")) {
+            currentDirectory = currentDirectory + "/";
+        }
+
         currentDirectory = currentDirectory + file.get_basename () + "/";
         update_file_view ();
     }
