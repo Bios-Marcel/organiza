@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="FilePaneContainer" parent="GtkBox">
+    <property name="can_focus">False</property>
+    <property name="hexpand">True</property>
+    <property name="vexpand">True</property>
+  </template>
+</interface>

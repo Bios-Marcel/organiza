@@ -6,7 +6,7 @@ public class Window : Gtk.ApplicationWindow {
     Gtk.Paned rootLayout;
 
     [GtkChild]
-    Gtk.Box filePaneContainer;
+    FilePaneContainer filePaneContainer;
 
     Terminal terminal;
 
@@ -32,74 +32,41 @@ public class Window : Gtk.ApplicationWindow {
         set_default_size (700, 500);
 
         load_file_manager_icon ();
+        load_css ("org/organiza/Organiza/key-bindings.css");
+
+        // Filepanes
+        filePaneContainer.iconManager = iconManager;
+
         focus_pane.connect ((index) => {
-            Gtk.Widget widgetToFocus = get_file_pane (index);
+            Gtk.Widget widgetToFocus = filePaneContainer.get_file_pane (index);
             if ( widgetToFocus != null ) {
                 widgetToFocus.grab_focus ();
             }
         });
+
+        filePaneContainer.new_file_pane ();
+        filePaneContainer.get_file_pane (0).grab_focus ();
+
+        // Terminal
+        terminal = new Terminal (this);
+
         focus_terminal.connect (() => {
             terminal.grab_focus ();
         });
 
-        load_css ("org/organiza/Organiza/key-bindings.css");
-        key_press_event.connect (new_file_pane_handler);
-
-        terminal = new Terminal (this);
-
         sync_wd.connect (() => {
-            terminal.feed_child (@"cd $(get_dir_of_selected_file_pane())".to_utf8 ());
+            string ? command = "cd " + filePaneContainer.get_dir_of_selected_file_pane ();
+            terminal.feed_child (command, command.length);
             terminal.grab_focus ();
         });
 
         rootLayout.add (terminal);
-
-        var filePane = new FilePane (iconManager, "/");
-        filePaneContainer.add (filePane);
-    }
-
-    private string ? get_dir_of_selected_file_pane () {
-        Gtk.Widget pane = (filePaneContainer.get_focus_child () as FilePane);
-
-        return (pane as FilePane).get_current_folder ();
     }
 
     private void load_css (string resource_path) {
         var css_provider = new Gtk.CssProvider ();
         css_provider.load_from_resource (resource_path);
         Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
-    }
-
-    private Gtk.Widget ? get_file_pane (int32 index) {
-        int32 currentIndex = 0;
-        foreach ( Gtk.Widget element in filePaneContainer.get_children ()) {
-            if ( currentIndex == index ) {
-                return element;
-            }
-
-            currentIndex = currentIndex + 1;
-        }
-
-        return null;
-    }
-
-
-
-    public bool new_file_pane_handler (Gdk.EventKey event) {
-        var ctrlAndShift = Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK;
-        if ((event.state & ctrlAndShift) != ctrlAndShift ) {
-            return false;
-        }
-
-        if ( event.keyval != Gdk.Key.N ) {
-            return false;
-        }
-
-        var filePane = new FilePane (iconManager, "/");
-        filePaneContainer.add (filePane);
-        filePane.show ();
-
-        return false;
     }
 
     private void load_file_manager_icon () {

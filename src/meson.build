@@ -2,6 +2,7 @@
 organiza_sources = files([
   'files/fileutil.vala',
   'filepane.vala',
+  'filepanecontainer.vala',
   'iconmanager.vala',
   'window.vala',
   'terminal.vala'

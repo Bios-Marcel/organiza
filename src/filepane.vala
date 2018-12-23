@@ -7,10 +7,26 @@ class FilePane : Gtk.ScrolledWindow {
     [GtkChild]
     private Gtk.ListStore fileTree;
 
+    /*[Signal (action = true)]
+       public signal bool navigate_down ();
+
+       [Signal (action = true)]
+       public signal bool navigate_up ();*/
+
     private string currentDirectory = "/";
     private FileMonitor ? currentDirectoryMonitor;
 
     private IconManager iconManager;
+
+    static construct {
+        set_css_name ("file-pane");
+    }
+
+    construct {
+        /*navigate_down.connect_after (navigate_down_handler);
+           navigate_up.connect (navigate_up_handler);*/
+        fileView.key_press_event.connect (on_key_pressed);
+    }
 
     public FilePane (IconManager iconManager, string directory) {
         this.iconManager = iconManager;
@@ -19,8 +35,6 @@ class FilePane : Gtk.ScrolledWindow {
             // TODO Is necessary for shift + f10 and the "context menu"-key to work
             return false;
         });
-
-        key_press_event.connect (delete_file_pane_handler);
 
         fileTree.set_sort_column_id (1, Gtk.SortType.ASCENDING);
         fileTree.set_sort_func (1, (model, iterOne, iterTwo) => {
@@ -57,27 +71,29 @@ class FilePane : Gtk.ScrolledWindow {
 
         update_file_view ();
         fileView.row_activated.connect (on_row_activated);
-        fileView.key_press_event.connect (on_key_pressed);
+    }
+
+    private bool on_key_pressed (Gtk.Widget widget, Gdk.EventKey event) {
+        if ( event.state != 0 ) {
+            return false;
+        }
+
+        switch ( event.keyval ) {
+            case Gdk.Key.Left: {
+                navigate_up_handler ();
+                return true;
+            }
+            case Gdk.Key.Right: {
+                navigate_down_handler ();
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public override void grab_focus () {
         fileView.grab_focus ();
-    }
-
-    private bool delete_file_pane_handler (Gdk.EventKey event) {
-        // TODO Replace with CSS
-        var ctrlAndShift = Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK;
-        if ((event.state & ctrlAndShift) != ctrlAndShift ) {
-            return false;
-        }
-
-        if ( event.keyval != Gdk.Key.D ) {
-            return false;
-        }
-
-        destroy ();
-
-        return false;
     }
 
     private void select_first () {
@@ -141,50 +157,42 @@ class FilePane : Gtk.ScrolledWindow {
      */
     private void on_row_activated (Gtk.TreeView treeview, Gtk.TreePath path, Gtk.TreeViewColumn column) {
         if ( get_selected_file_name () == ".." ) {
-            navigate_up ();
+            navigate_up_handler ();
         } else {
             var selectedFile = get_selected_file ();
-            if ( selectedFile.query_file_type (FileQueryInfoFlags.NONE) == FileType.DIRECTORY ) {
-                navigate_down ();
-            } else {
+            if ( !navigate_down_handler ()) {
                 FileUtil.open_file (selectedFile);
             }
         }
-    }
-
-    private bool on_key_pressed (Gtk.Widget widget, Gdk.EventKey event) {
-        switch ( event.keyval ) {
-            case Gdk.Key.Left: {
-                navigate_up ();
-                return true;
-            }
-            case Gdk.Key.Right: {
-                var selectedFile = get_selected_file ();
-                if ( get_selected_file_name () != ".."
-                     && selectedFile.query_file_type (FileQueryInfoFlags.NONE) == FileType.DIRECTORY ) {
-                    navigate_down ();
-                    return true;
-                }
-                return false;
-            }
-        }
-
-        return false;
     }
 
     public string get_current_folder () {
         return currentDirectory;
     }
 
-    private void navigate_up () {
+    public bool navigate_up_handler () {
         var parentFolder = File.new_for_path (currentDirectory).get_parent ();
         if ( parentFolder != null ) {
             currentDirectory = parentFolder.get_path ();
             update_file_view ();
+            return true;
         }
+
+        return false;
     }
 
-    private void navigate_down () {
+    public bool navigate_down_handler () {
+        var selectedFile = get_selected_file ();
+        if ( get_selected_file_name () != ".."
+             && selectedFile.query_file_type (FileQueryInfoFlags.NONE) == FileType.DIRECTORY ) {
+            navigate_down_handler_unsafe ();
+            return true;
+        }
+
+        return false;
+    }
+
+    private void navigate_down_handler_unsafe () {
         var file = get_selected_file ();
         currentDirectory = currentDirectory + file.get_basename () + "/";
         update_file_view ();

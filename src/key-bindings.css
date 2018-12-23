@@ -21,8 +21,33 @@
     bind "<Ctrl>less" { "focus_terminal" () };
 }
 
+@binding-set FilePaneContainerBindings
+{
+    bind "<Ctrl><Shift>N" { "new_file_pane" () };
+    bind "<Ctrl><Shift>D" { "delete_file_pane" () };
+}
+
+
+/*
+Currently not functional, since the tree view swallows the events.
+
+@binding-set FileTreeNavigationBindings
+{
+    bind "Left" { "navigate_up" () };
+    bind "Right" { "navigate_down" () };
+}
+*/
+
 main-window {
     -gtk-key-bindings: PaneFocusBindings, OtherBindings;
+}
+
+file-pane {
+    -gtk-key-bindings: FileTreeNavigationBindings;
+}
+
+file-pane-container {
+    -gtk-key-bindings: FilePaneContainerBindings;
 }
 
 main-window-terminal {

@@ -18,11 +18,7 @@
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkBox" id="filePaneContainer">
-            <property name="can_focus">False</property>
-            <property name="hexpand">True</property>
-            <property name="vexpand">True</property>
-          </object>
+          <object class="FilePaneContainer" id="filePaneContainer"/>
           <packing>
             <property name="resize">True</property>
             <property name="shrink">True</property>
