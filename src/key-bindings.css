@@ -42,9 +42,9 @@ main-window {
     -gtk-key-bindings: PaneFocusBindings, OtherBindings;
 }
 
-file-pane {
+/*file-pane {
     -gtk-key-bindings: FileTreeNavigationBindings;
-}
+}*/
 
 file-pane-container {
     -gtk-key-bindings: FilePaneContainerBindings;
