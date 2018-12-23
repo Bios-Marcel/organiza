@@ -7,11 +7,11 @@ class FilePane : Gtk.ScrolledWindow {
     [GtkChild]
     private Gtk.ListStore fileTree;
 
-    /*[Signal (action = true)]
-       public signal bool navigate_down ();
+    [Signal (action = true)]
+    public signal void navigate_down ();
 
-       [Signal (action = true)]
-       public signal bool navigate_up ();*/
+    [Signal (action = true)]
+    public signal void navigate_up ();
 
     private string currentDirectory = "/";
     private FileMonitor ? currentDirectoryMonitor;
@@ -23,8 +23,8 @@ class FilePane : Gtk.ScrolledWindow {
     }
 
     construct {
-        /*navigate_down.connect_after (navigate_down_handler);
-           navigate_up.connect (navigate_up_handler);*/
+        navigate_down.connect_after (navigate_down_handler);
+        navigate_up.connect (navigate_up_handler);
         fileView.key_press_event.connect (on_key_pressed);
     }
 
@@ -149,7 +149,9 @@ class FilePane : Gtk.ScrolledWindow {
      */
     private void on_row_activated (Gtk.TreeView treeview, Gtk.TreePath path, Gtk.TreeViewColumn column) {
         var selectedFile = get_selected_file ();
-        if ( !navigate_down_handler ()) {
+        if ( selectedFile.query_file_type (FileQueryInfoFlags.NONE) == FileType.DIRECTORY ) {
+            navigate_down_handler_unsafe ();
+        } else {
             FileUtil.open_file (selectedFile);
         }
     }
@@ -158,25 +160,19 @@ class FilePane : Gtk.ScrolledWindow {
         return currentDirectory;
     }
 
-    public bool navigate_up_handler () {
+    public void navigate_up_handler () {
         var parentFolder = File.new_for_path (currentDirectory).get_parent ();
         if ( parentFolder != null ) {
             currentDirectory = parentFolder.get_path ();
             update_file_view ();
-            return true;
         }
-
-        return false;
     }
 
-    public bool navigate_down_handler () {
+    public void navigate_down_handler () {
         var selectedFile = get_selected_file ();
         if ( selectedFile.query_file_type (FileQueryInfoFlags.NONE) == FileType.DIRECTORY ) {
             navigate_down_handler_unsafe ();
-            return true;
         }
-
-        return false;
     }
 
     private void navigate_down_handler_unsafe () {

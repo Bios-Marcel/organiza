@@ -27,24 +27,23 @@
     bind "<Ctrl><Shift>D" { "delete_file_pane" () };
 }
 
-
-/*
-Currently not functional, since the tree view swallows the events.
-
 @binding-set FileTreeNavigationBindings
 {
+    /*Currently not functional, since the tree view swallows the events.
     bind "Left" { "navigate_up" () };
-    bind "Right" { "navigate_down" () };
+    bind "Right" { "navigate_down" () };*/
+
+    bind "BackSpace" { "navigate_up" () };
 }
-*/
+
 
 main-window {
     -gtk-key-bindings: PaneFocusBindings, OtherBindings;
 }
 
-/*file-pane {
+file-pane {
     -gtk-key-bindings: FileTreeNavigationBindings;
-}*/
+}
 
 file-pane-container {
     -gtk-key-bindings: FilePaneContainerBindings;
