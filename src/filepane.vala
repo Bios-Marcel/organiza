@@ -120,14 +120,6 @@ class FilePane : Gtk.ScrolledWindow {
             });
             Gtk.TreeIter iter;
 
-            // If there is a parent-folder, we wan't to give the user the opportunity to navigate there per mouse, therefore we add an `..` item.
-            var parentFolder = directory.get_parent ();
-            if ( parentFolder != null ) {
-                fileTree.append (out iter);
-                var folderIcon = iconManager.iconTheme.lookup_icon ("folder", 24, Gtk.IconLookupFlags.USE_BUILTIN).load_icon ();
-                fileTree.set (iter, 0, folderIcon, 1, "..", 2, "");
-            }
-
             // FIXME The documentation suggests to use enumerate_children_async to not block the thread.
             var enumerator = directory.enumerate_children ("standard::*", FileQueryInfoFlags.NONE);
 
@@ -156,13 +148,9 @@ class FilePane : Gtk.ScrolledWindow {
      * Handles leftclicks in the fileView.
      */
     private void on_row_activated (Gtk.TreeView treeview, Gtk.TreePath path, Gtk.TreeViewColumn column) {
-        if ( get_selected_file_name () == ".." ) {
-            navigate_up_handler ();
-        } else {
-            var selectedFile = get_selected_file ();
-            if ( !navigate_down_handler ()) {
-                FileUtil.open_file (selectedFile);
-            }
+        var selectedFile = get_selected_file ();
+        if ( !navigate_down_handler ()) {
+            FileUtil.open_file (selectedFile);
         }
     }
 
@@ -183,8 +171,7 @@ class FilePane : Gtk.ScrolledWindow {
 
     public bool navigate_down_handler () {
         var selectedFile = get_selected_file ();
-        if ( get_selected_file_name () != ".."
-             && selectedFile.query_file_type (FileQueryInfoFlags.NONE) == FileType.DIRECTORY ) {
+        if ( selectedFile.query_file_type (FileQueryInfoFlags.NONE) == FileType.DIRECTORY ) {
             navigate_down_handler_unsafe ();
             return true;
         }
