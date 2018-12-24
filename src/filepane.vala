@@ -13,6 +13,12 @@ class FilePane : Gtk.ScrolledWindow {
     [Signal (action = true)]
     public signal void navigate_up ();
 
+    [Signal (action = true)]
+    public signal void delete_file ();
+
+    [Signal (action = true)]
+    public signal void trash_file ();
+
     private string currentDirectory = "/";
     private FileMonitor ? currentDirectoryMonitor;
 
@@ -25,7 +31,11 @@ class FilePane : Gtk.ScrolledWindow {
     construct {
         navigate_down.connect_after (navigate_down_handler);
         navigate_up.connect (navigate_up_handler);
-        fileView.key_press_event.connect (on_key_pressed);
+        fileView.key_press_event.connect (on_arrow_key_navigation);
+
+        delete_file.connect (delete_file_handler);
+        trash_file.connect (trash_file_handler);
+        button_press_event.connect (button_press_handler);
     }
 
     public FilePane (IconManager iconManager, string directory) {
@@ -71,9 +81,24 @@ class FilePane : Gtk.ScrolledWindow {
 
         update_file_view ();
         fileView.row_activated.connect (on_row_activated);
+        <
     }
 
-    private bool on_key_pressed (Gtk.Widget widget, Gdk.EventKey event) {
+    private bool button_press_handler (Gdk.EventButton event) {
+        if ( event.state != 0 ) {
+            return false;
+        }
+
+        // TODO: This is the back button on the mouse, is there some constant for this?
+        if ( event.button == 8 ) {
+            navigate_up_handler ();
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool on_arrow_key_navigation (Gtk.Widget widget, Gdk.EventKey event) {
         if ( event.state != 0 ) {
             return false;
         }
@@ -144,9 +169,34 @@ class FilePane : Gtk.ScrolledWindow {
         select_first ();
     }
 
-    /**
-     * Handles leftclicks in the fileView.
-     */
+    public void delete_file_handler () {
+        string filePath = currentDirectory + get_selected_file_name ();
+        try {
+            Process.spawn_async ("/",
+                                 { "rm", "--recursive", "--force", filePath },
+                                 null,
+                                 SpawnFlags.SEARCH_PATH,
+                                 null,
+                                 null);
+        } catch ( GLib.SpawnError error ) {
+            critical ("Error deleting file '%s'; %s", filePath, error.message);
+        }
+    }
+
+    public void trash_file_handler () {
+        string filePath = currentDirectory + get_selected_file_name ();
+        try {
+            Process.spawn_async ("/",
+                                 { "gio", "trash", "--force", filePath },
+                                 null,
+                                 SpawnFlags.SEARCH_PATH,
+                                 null,
+                                 null);
+        } catch ( GLib.SpawnError error ) {
+            critical ("Error trashing file '%s'; %s", filePath, error.message);
+        }
+    }
+
     private void on_row_activated (Gtk.TreeView treeview, Gtk.TreePath path, Gtk.TreeViewColumn column) {
         var selectedFile = get_selected_file ();
         if ( selectedFile.query_file_type (FileQueryInfoFlags.NONE) == FileType.DIRECTORY ) {
@@ -177,11 +227,11 @@ class FilePane : Gtk.ScrolledWindow {
 
     private void navigate_down_handler_unsafe () {
         var file = get_selected_file ();
-        if ( !currentDirectory.has_suffix ("/")) {
-            currentDirectory = currentDirectory + "/";
+        if ( !currentDirectory.has_suffix (Path.DIR_SEPARATOR_S)) {
+            currentDirectory = currentDirectory + Path.DIR_SEPARATOR_S;
         }
 
-        currentDirectory = currentDirectory + file.get_basename () + "/";
+        currentDirectory = currentDirectory + file.get_basename () + Path.DIR_SEPARATOR_S;
         update_file_view ();
     }
 

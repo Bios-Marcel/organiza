@@ -32,17 +32,23 @@
     /*Currently not functional, since the tree view swallows the events.
     bind "Left" { "navigate_up" () };
     bind "Right" { "navigate_down" () };*/
-
     bind "BackSpace" { "navigate_up" () };
+    bind "Undo" { "navigate_up" () };
+    bind "Redo" { "navigate_down" () };
 }
 
+@binding-set FileActionBindings
+{
+    bind "<Ctrl>Delete" { "delete_file" () };
+    bind "Delete" { "trash_file" () };
+}
 
 main-window {
     -gtk-key-bindings: PaneFocusBindings, OtherBindings;
 }
 
 file-pane {
-    -gtk-key-bindings: FileTreeNavigationBindings;
+    -gtk-key-bindings: FileTreeNavigationBindings, FileActionBindings;
 }
 
 file-pane-container {
