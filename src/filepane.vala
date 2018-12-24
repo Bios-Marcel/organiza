@@ -14,10 +14,15 @@ class FilePane : Gtk.ScrolledWindow {
     public signal void navigate_up ();
 
     [Signal (action = true)]
+    public signal void new_file ();
+
+    [Signal (action = true)]
     public signal void delete_file ();
 
     [Signal (action = true)]
     public signal void trash_file ();
+
+    private Window window;
 
     private string currentDirectory = "/";
     private FileMonitor ? currentDirectoryMonitor;
@@ -32,19 +37,17 @@ class FilePane : Gtk.ScrolledWindow {
         navigate_down.connect_after (navigate_down_handler);
         navigate_up.connect (navigate_up_handler);
         fileView.key_press_event.connect (on_arrow_key_navigation);
+        button_press_event.connect (button_press_handler);
+
+        new_file.connect (new_file_handler);
 
         delete_file.connect (delete_file_handler);
         trash_file.connect (trash_file_handler);
-        button_press_event.connect (button_press_handler);
     }
 
-    public FilePane (IconManager iconManager, string directory) {
+    public FilePane (Window window, IconManager iconManager, string directory) {
+        this.window = window;
         this.iconManager = iconManager;
-
-        fileView.popup_menu.connect (() => {
-            // TODO Is necessary for shift + f10 and the "context menu"-key to work
-            return false;
-        });
 
         fileTree.set_sort_column_id (1, Gtk.SortType.ASCENDING);
         fileTree.set_sort_func (1, (model, iterOne, iterTwo) => {
@@ -57,7 +60,6 @@ class FilePane : Gtk.ScrolledWindow {
             string nameOneString = (string) nameOne;
             string nameTwoString = (string) nameTwo;
 
-            // TODO Find out if this might this be a huge performance impact? Instead keep file-informations about entries and use those?
             File fileOne = File.new_for_path (currentDirectory + Path.DIR_SEPARATOR_S + nameOneString);
             File fileTwo = File.new_for_path (currentDirectory + Path.DIR_SEPARATOR_S + nameTwoString);
             FileType fileTypeOne = fileOne.query_file_type (FileQueryInfoFlags.NONE);
@@ -81,7 +83,6 @@ class FilePane : Gtk.ScrolledWindow {
 
         update_file_view ();
         fileView.row_activated.connect (on_row_activated);
-        <
     }
 
     private bool button_press_handler (Gdk.EventButton event) {
@@ -130,6 +131,7 @@ class FilePane : Gtk.ScrolledWindow {
     }
 
     private void update_file_view () {
+        GLib.FileEnumerator enumerator = null;
         try {
             fileTree.clear ();
 
@@ -143,11 +145,11 @@ class FilePane : Gtk.ScrolledWindow {
                 // TODO Marcel: Might it be better if i only update the entry containg the file?
                 update_file_view ();
             });
-            Gtk.TreeIter iter;
 
             // FIXME The documentation suggests to use enumerate_children_async to not block the thread.
-            var enumerator = directory.enumerate_children ("standard::*", FileQueryInfoFlags.NONE);
+            enumerator = directory.enumerate_children ("standard::*", FileQueryInfoFlags.NONE);
 
+            Gtk.TreeIter iter;
             FileInfo childFileInfo;
             while ((childFileInfo = enumerator.next_file ()) != null ) {
                 fileTree.append (out iter);
@@ -164,9 +166,36 @@ class FilePane : Gtk.ScrolledWindow {
             }
         } catch ( Error error ) {
             critical ("Error updating fileview; Errormessage: %s\n", error.message);
+        } finally {
+            if ( enumerator != null ) {
+                try {
+                    enumerator.close ();
+                } catch ( GLib.Error error ) {
+                    critical ("Unable to close file enumerator: %s", error.message);
+                }
+            }
         }
-
         select_first ();
+    }
+
+    public void new_file_handler () {
+        window.run_input_action ((inputString) => {
+            string fileToCreate = currentDirectory + inputString;
+            try {
+                File file = File.new_for_path (fileToCreate);
+                if ( inputString.has_suffix ("/")) {
+                    file.make_directory_with_parents ();
+                } else {
+                    file.get_parent ().make_directory_with_parents ();
+                    FileOutputStream stream = file.create (FileCreateFlags.PRIVATE);
+                    stream.close ();
+                }
+            } catch ( GLib.Error error ) {
+                critical ("Error creating file '%s': %s", fileToCreate, error.message);
+            }
+
+            grab_focus ();
+        });
     }
 
     public void delete_file_handler () {

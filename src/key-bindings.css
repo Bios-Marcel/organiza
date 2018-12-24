@@ -39,6 +39,8 @@
 
 @binding-set FileActionBindings
 {
+    bind "<Ctrl>W" { "new_file" () };
+
     bind "<Ctrl>Delete" { "delete_file" () };
     bind "Delete" { "trash_file" () };
 }

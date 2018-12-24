@@ -18,7 +18,18 @@
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="FilePaneContainer" id="filePaneContainer"/>
+          <object class="GtkBox">
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="FilePaneContainer" id="filePaneContainer"/>
+            </child>
+            <child>
+              <object class="GtkEntry" id="globalInputField">
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+              </object>
+            </child>
+          </object>
           <packing>
             <property name="resize">True</property>
             <property name="shrink">True</property>

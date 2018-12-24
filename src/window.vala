@@ -8,6 +8,11 @@ public class Window : Gtk.ApplicationWindow {
     [GtkChild]
     FilePaneContainer filePaneContainer;
 
+    [GtkChild]
+    Gtk.Entry globalInputField;
+
+    private inputAction ? currentInputAction;
+
     Terminal terminal;
 
     [Signal (action = true)]
@@ -36,6 +41,7 @@ public class Window : Gtk.ApplicationWindow {
 
         // Filepanes
         filePaneContainer.iconManager = iconManager;
+        filePaneContainer.window = this;
 
         focus_pane.connect ((index) => {
             Gtk.Widget widgetToFocus = filePaneContainer.get_file_pane (index);
@@ -46,6 +52,24 @@ public class Window : Gtk.ApplicationWindow {
 
         filePaneContainer.new_file_pane ();
         filePaneContainer.get_file_pane (0).grab_focus ();
+
+        // Global input field
+        globalInputField.activate.connect (() => {
+            if ( currentInputAction != null ) {
+                
+                currentInputAction (globalInputField.get_text ());
+            }
+
+            currentInputAction = null;
+            globalInputField.set_sensitive (false);
+        });
+
+        globalInputField.focus_out_event.connect ((event) => {
+            globalInputField.set_text ("");
+            globalInputField.set_sensitive (false);
+            currentInputAction = null;
+            return false;
+        });
 
         // Terminal
         terminal = new Terminal (this);
@@ -74,6 +98,15 @@ public class Window : Gtk.ApplicationWindow {
         if ( appIcon != null ) {
             icon = appIcon;
         }
+    }
+
+    public delegate void inputAction (string inputString);
+
+    public void run_input_action (inputAction action) {
+        currentInputAction = action;
+
+        globalInputField.set_sensitive (true);
+        globalInputField.grab_focus ();
     }
 
 }

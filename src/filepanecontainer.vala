@@ -2,6 +2,8 @@
 class FilePaneContainer : Gtk.Box {
     public IconManager iconManager;
 
+    public Window window;
+
     [Signal (action = true)]
     public signal void new_file_pane ();
 
@@ -38,7 +40,7 @@ class FilePaneContainer : Gtk.Box {
     }
 
     public void new_file_pane_handler () {
-        var filePane = new FilePane (iconManager, "/");
+        var filePane = new FilePane (window, iconManager, "/");
         add (filePane);
         filePane.show_all ();
     }

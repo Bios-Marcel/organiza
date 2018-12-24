@@ -118,15 +118,17 @@ namespace FileUtil {
      * Returns the size of a given file or or folder. In case the given file is a folder, the size will be calculated recursively.
      */
     public int64 get_file_size (File file) {
+        GLib.FileEnumerator enumerator = null;
+
         try {
             FileInfo fileInfo = file.query_info ("standard::*", FileQueryInfoFlags.NONE);
             if ( fileInfo.get_file_type () == FileType.DIRECTORY ) {
                 int64 size = 0;
 
-                var enumerator = file.enumerate_children ("standard::*", FileQueryInfoFlags.NOFOLLOW_SYMLINKS);
+                enumerator = file.enumerate_children ("standard::*", FileQueryInfoFlags.NOFOLLOW_SYMLINKS);
 
                 FileInfo childFileInfo;
-                while ( (childFileInfo = enumerator.next_file ()) != null ) {
+                while ((childFileInfo = enumerator.next_file ()) != null ) {
                     size += get_file_size (file.resolve_relative_path (childFileInfo.get_name ()));
                 }
 
@@ -137,6 +139,14 @@ namespace FileUtil {
         } catch ( Error error ) {
             warning ("Error retrieving filesize; Errormessage: %s\n", error.message);
             return 0;
+        } finally {
+            if ( enumerator != null ) {
+                try {
+                    enumerator.close ();
+                } catch ( GLib.Error error ) {
+                    critical ("Unable to close file enumerator: %s", error.message);
+                }
+            }
         }
     }
 
