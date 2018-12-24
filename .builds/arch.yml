@@ -6,7 +6,7 @@ packages:
   - vala
 tasks:
   - setup: |
-      git clone https://github.com/Bios-Marcel/Organiza
+      git clone https://github.com/Bios-Marcel/organiza
       cd Organiza
       meson build
       ninja -Cbuild test
