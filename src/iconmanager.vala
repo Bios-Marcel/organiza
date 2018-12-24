@@ -2,9 +2,7 @@ class IconManager {
     // We needn't retrieve the theme over and over again.
     public Gtk.IconTheme iconTheme = Gtk.IconTheme.get_default ();
 
-    // TODO Marcel: I'd prefer using Icon.hash () over Icon.to_string (); Find out how to use uint properly in HashTable
-    // Used for caching icons in order to decrease loading time when switching folders
-    HashTable<string, Gdk.Pixbuf> iconCache = new HashTable<string, Gdk.Pixbuf> (str_hash, str_equal);
+    HashTable<uint, Gdk.Pixbuf> iconCache = new HashTable<uint, Gdk.Pixbuf> (direct_hash, direct_equal);
 
     /**
      * Loads and returns the icon which the current icon theme uses for the given FileInfo.
@@ -22,15 +20,15 @@ class IconManager {
 
         try {
             var icon = info.get_icon ();
-            var iconAsString = icon.to_string ();
-            var pixbuf = iconCache.get (iconAsString);
+            var iconHash = icon.hash ();
+            var pixbuf = iconCache.get (iconHash);
             if ( pixbuf == null ) {
                 // If the icon isn't cached yet, we will look it up, add it to the cache and return it.
                 pixbuf = iconTheme.lookup_by_gicon (icon, 24, Gtk.IconLookupFlags.USE_BUILTIN).load_icon ();
-                iconCache.insert (iconAsString, pixbuf);
+                iconCache.insert (iconHash, pixbuf);
             }
 
-            // by now pixbuf will be non-null and cached.
+            // by now the pixbuf should be non-null and cached.
             return pixbuf;
         } catch ( Error error ) {
             critical ("Error retrieving icon for file: %s\n", info.get_name ());
