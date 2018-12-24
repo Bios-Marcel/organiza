@@ -7,6 +7,6 @@ packages:
 tasks:
   - setup: |
       git clone https://github.com/Bios-Marcel/organiza
-      cd Organiza
+      cd organiza
       meson build
       ninja -Cbuild test
