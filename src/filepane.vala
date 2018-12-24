@@ -241,6 +241,7 @@ class FilePane : Gtk.ScrolledWindow {
         var parentFolder = File.new_for_path (currentDirectory).get_parent ();
         if ( parentFolder != null ) {
             currentDirectory = parentFolder.get_path ();
+            fix_current_dir_path_if_necessary ();
             update_file_view ();
         }
     }
@@ -252,11 +253,15 @@ class FilePane : Gtk.ScrolledWindow {
         }
     }
 
-    private void navigate_down_handler_unsafe () {
-        var file = get_selected_file ();
+    private void fix_current_dir_path_if_necessary () {
         if ( !currentDirectory.has_suffix (Path.DIR_SEPARATOR_S)) {
             currentDirectory = currentDirectory + Path.DIR_SEPARATOR_S;
         }
+    }
+
+    private void navigate_down_handler_unsafe () {
+        var file = get_selected_file ();
+        fix_current_dir_path_if_necessary ();
 
         currentDirectory = currentDirectory + file.get_basename () + Path.DIR_SEPARATOR_S;
         update_file_view ();
