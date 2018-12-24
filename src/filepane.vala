@@ -1,5 +1,3 @@
-using FileUtil;
-
 [GtkTemplate (ui = "/org/organiza/Organiza/filepane.ui")]
 class FilePane : Gtk.ScrolledWindow {
     [GtkChild]

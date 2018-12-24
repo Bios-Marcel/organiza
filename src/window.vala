@@ -1,5 +1,3 @@
-using FileUtil;
-
 [GtkTemplate (ui = "/org/organiza/Organiza/window.ui")]
 public class Window : Gtk.ApplicationWindow {
     [GtkChild]
@@ -56,7 +54,7 @@ public class Window : Gtk.ApplicationWindow {
         // Global input field
         globalInputField.activate.connect (() => {
             if ( currentInputAction != null ) {
-                
+
                 currentInputAction (globalInputField.get_text ());
             }
 
