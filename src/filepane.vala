@@ -184,7 +184,10 @@ class FilePane : Gtk.ScrolledWindow {
                 if ( inputString.has_suffix ("/")) {
                     file.make_directory_with_parents ();
                 } else {
-                    file.get_parent ().make_directory_with_parents ();
+                    File parent = file.get_parent ();
+                    if ( !parent.query_exists ()) {
+                        parent.make_directory_with_parents ();
+                    }
                     FileOutputStream stream = file.create (FileCreateFlags.PRIVATE);
                     stream.close ();
                 }
