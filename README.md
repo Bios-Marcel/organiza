@@ -8,7 +8,7 @@ This is an attempt at writing a file manager that suits my needs. The app
 will not have much mouse support, instead it will try to have intuitive
 keyboard shortcuts.
 
-If you want to know how to use this application, check out the wiki.
+If you want to know how to use this application, [check out the wiki](https://github.com/Bios-Marcel/organiza/wiki).
 
 ## How to build
 
