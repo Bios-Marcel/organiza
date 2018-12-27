@@ -15,6 +15,9 @@ class FilePane : Gtk.ScrolledWindow {
     public signal void new_file ();
 
     [Signal (action = true)]
+    public signal void move_file ();
+
+    [Signal (action = true)]
     public signal void delete_file ();
 
     [Signal (action = true)]
@@ -38,7 +41,7 @@ class FilePane : Gtk.ScrolledWindow {
         button_press_event.connect (button_press_handler);
 
         new_file.connect (new_file_handler);
-
+        move_file.connect (move_file_handler);
         delete_file.connect (delete_file_handler);
         trash_file.connect (trash_file_handler);
     }
@@ -177,7 +180,7 @@ class FilePane : Gtk.ScrolledWindow {
     }
 
     public void new_file_handler () {
-        window.run_input_action ((inputString) => {
+        window.run_input_action ("Create new file at: " + currentDirectory, (inputString) => {
             string fileToCreate = currentDirectory + inputString;
             try {
                 File file = File.new_for_path (fileToCreate);
@@ -196,6 +199,35 @@ class FilePane : Gtk.ScrolledWindow {
             }
 
             grab_focus ();
+        });
+    }
+
+    public void move_file_handler () {
+        string filePath = currentDirectory + get_selected_file_name ();
+        window.run_input_action ("Move file: " + filePath, (inputString) => {
+            string oldFile = currentDirectory + get_selected_file_name ();
+            string newFile = null;
+
+            if ( inputString.has_prefix ("/")) {
+                newFile = inputString;
+            } else {
+                newFile = currentDirectory + inputString;
+            }
+
+            File file = File.new_for_path (newFile);
+            File parent = file.get_parent ();
+
+            try {
+                if ( !parent.query_exists ()) {
+                    parent.make_directory_with_parents ();
+                }
+
+                GLib.FileUtils.rename (oldFile, newFile);
+            } catch ( GLib.Error error ) {
+                critical ("Error moving file '%s' to'%s': %s", oldFile, newFile, error.message);
+            } finally {
+                grab_focus ();
+            }
         });
     }
 

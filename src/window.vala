@@ -9,6 +9,9 @@ public class Window : Gtk.ApplicationWindow {
     [GtkChild]
     Gtk.Entry globalInputField;
 
+    [GtkChild]
+    Gtk.Label globalInputLabel;
+
     private inputAction ? currentInputAction;
 
     Terminal terminal;
@@ -58,16 +61,22 @@ public class Window : Gtk.ApplicationWindow {
                 currentInputAction (globalInputField.get_text ());
             }
 
-            currentInputAction = null;
-            globalInputField.set_sensitive (false);
+            cancel_global_input_edit_handler ();
         });
 
         globalInputField.focus_out_event.connect ((event) => {
-            globalInputField.set_text ("");
-            globalInputField.set_sensitive (false);
-            currentInputAction = null;
+            cancel_global_input_edit_handler ();
             return false;
         });
+
+        globalInputField.key_press_event.connect ((widget, event) => {
+            if ( event.state == 0 && event.keyval == Gdk.Key.Escape ) {
+                cancel_global_input_edit_handler ();
+            }
+
+            return false;
+        });
+
 
         // Terminal
         terminal = new Terminal (this);
@@ -85,6 +94,13 @@ public class Window : Gtk.ApplicationWindow {
         rootLayout.add (terminal);
     }
 
+    private void cancel_global_input_edit_handler () {
+        globalInputLabel.set_text ("");
+        globalInputField.set_text ("");
+        globalInputField.set_sensitive (false);
+        currentInputAction = null;
+    }
+
     private void load_css (string resource_path) {
         var css_provider = new Gtk.CssProvider ();
         css_provider.load_from_resource (resource_path);
@@ -100,7 +116,8 @@ public class Window : Gtk.ApplicationWindow {
 
     public delegate void inputAction (string inputString);
 
-    public void run_input_action (inputAction action) {
+    public void run_input_action (string actionString, inputAction action) {
+        globalInputLabel.set_text (actionString);
         currentInputAction = action;
 
         globalInputField.set_sensitive (true);

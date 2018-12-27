@@ -24,9 +24,23 @@
               <object class="FilePaneContainer" id="filePaneContainer"/>
             </child>
             <child>
-              <object class="GtkEntry" id="globalInputField">
-                <property name="visible">True</property>
-                <property name="sensitive">False</property>
+              <object class="GtkBox">
+                <property name="orientation">horizontal</property>
+                <child>
+                  <object class="GtkEntry" id="globalInputField">
+                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="globalInputLabel">
+                    <property name="margin-left">5</property>
+                    <property name="margin-right">5</property>
+                  </object>
+                </child>
               </object>
             </child>
           </object>
