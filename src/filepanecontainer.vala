@@ -8,6 +8,9 @@ class FilePaneContainer : Gtk.Box {
     public signal void new_file_pane ();
 
     [Signal (action = true)]
+    public signal void new_file_pane_same_wd ();
+
+    [Signal (action = true)]
     public signal void delete_file_pane ();
 
     static construct {
@@ -16,6 +19,7 @@ class FilePaneContainer : Gtk.Box {
 
     construct {
         new_file_pane.connect (new_file_pane_handler);
+        new_file_pane_same_wd.connect (new_file_pane_same_wd_handler);
         delete_file_pane.connect (delete_file_pane_handler);
     }
 
@@ -39,8 +43,22 @@ class FilePaneContainer : Gtk.Box {
         return null;
     }
 
+    public void new_file_pane_same_wd_handler () {
+        string newWorkingDirectory = get_dir_of_selected_file_pane ();
+        if ( newWorkingDirectory == null ) {
+            newWorkingDirectory = "/";
+            warning ("NULL");
+        }
+
+        new_file_pane_at (newWorkingDirectory);
+    }
+
     public void new_file_pane_handler () {
-        var filePane = new FilePane (window, iconManager, "/");
+        new_file_pane_at ("/");
+    }
+
+    private void new_file_pane_at (string directory) {
+        var filePane = new FilePane (window, iconManager, directory);
         add (filePane);
         filePane.show_all ();
     }

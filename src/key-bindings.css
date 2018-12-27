@@ -24,6 +24,7 @@
 @binding-set FilePaneContainerBindings
 {
     bind "<Ctrl><Shift>N" { "new_file_pane" () };
+    bind "<Ctrl><Shift><Alt>N" { "new_file_pane_same_wd" () };
     bind "<Ctrl><Shift>D" { "delete_file_pane" () };
 }
 

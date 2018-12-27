@@ -49,6 +49,7 @@ class FilePane : Gtk.ScrolledWindow {
     public FilePane (Window window, IconManager iconManager, string directory) {
         this.window = window;
         this.iconManager = iconManager;
+        this.currentDirectory = directory;
 
         fileTree.set_sort_column_id (1, Gtk.SortType.ASCENDING);
         fileTree.set_sort_func (1, (model, iterOne, iterTwo) => {
