@@ -18,7 +18,7 @@ organiza_deps = [
   dependency('gio-2.0', version: '>= 2.48'),
   dependency('gtk+-3.0', version: '>= 3.18'),
   dependency('glib-2.0', version: '>= 2.48'),
-  dependency('vte-2.91', version: '>= 0.52.2'),
+  dependency('vte-2.91', version: '>= 0.50.2'),
   math_dep,
 ]
 
