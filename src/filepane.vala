@@ -30,6 +30,9 @@ class FilePane : Gtk.ScrolledWindow {
 
     private IconManager iconManager;
 
+    private string searchString = "";
+    private uint32 lastSearchInput = 0;
+
     static construct {
         set_css_name ("file-pane");
     }
@@ -38,6 +41,7 @@ class FilePane : Gtk.ScrolledWindow {
         navigate_down.connect_after (navigate_down_handler);
         navigate_up.connect (navigate_up_handler);
         fileView.key_press_event.connect (on_arrow_key_navigation);
+        fileView.key_release_event.connect_after (search_entry_handler);
         button_press_event.connect (button_press_handler);
 
         new_file.connect (new_file_handler);
@@ -96,6 +100,57 @@ class FilePane : Gtk.ScrolledWindow {
         if ( event.button == 8 ) {
             navigate_up_handler ();
             return true;
+        }
+
+        return false;
+    }
+
+    private bool search_entry_handler (Gtk.Widget widget, Gdk.EventKey event) {
+        if ( event.state != 0 ) {
+            return false;
+        }
+
+        // Manual reset via escape
+        if ( event.keyval == Gdk.Key.Escape ) {
+            searchString = "";
+            lastSearchInput = event.time;
+            return true;
+        }
+
+        if ( event.str == null || event.str == "" ) {
+            return false;
+        }
+
+        if ((event.time - lastSearchInput) > 1000 ) {
+            searchString = event.str;
+        } else {
+            searchString = searchString + event.str;
+        }
+
+        lastSearchInput = event.time;
+
+        // Reset, since the sequence won't lead to a find anymore.
+        if ( !apply_search_string (searchString)) {
+            searchString = "";
+        }
+
+        return true;
+    }
+
+    private bool apply_search_string (string stringToSearchFor) {
+        Gtk.TreeIter iter;
+        GLib.Value valueRaw;
+
+        for ( bool next = fileTree.get_iter_first (out iter) ; next ; next = fileTree.iter_next (ref iter)) {
+            fileTree.get_value (iter, 1, out valueRaw);
+
+            string name = (string) valueRaw;
+
+            if ( name.has_prefix (stringToSearchFor)) {
+                fileView.get_selection ().select_iter (iter);
+                fileView.set_cursor (fileTree.get_path (iter), fileView.get_column (1), false);
+                return true;
+            }
         }
 
         return false;
@@ -278,6 +333,7 @@ class FilePane : Gtk.ScrolledWindow {
         if ( parentFolder != null ) {
             currentDirectory = parentFolder.get_path ();
             fix_current_dir_path_if_necessary ();
+            on_navigate ();
             update_file_view ();
         }
     }
@@ -300,7 +356,12 @@ class FilePane : Gtk.ScrolledWindow {
         fix_current_dir_path_if_necessary ();
 
         currentDirectory = currentDirectory + file.get_basename () + Path.DIR_SEPARATOR_S;
+        on_navigate ();
         update_file_view ();
+    }
+
+    private void on_navigate () {
+        searchString = "";
     }
 
     private string ? get_selected_file_name () {
