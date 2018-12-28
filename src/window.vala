@@ -116,9 +116,9 @@ public class Window : Gtk.ApplicationWindow {
 
     public delegate void inputAction (string inputString);
 
-    public void run_input_action (string actionString, inputAction action) {
+    public void run_input_action (string actionString, owned inputAction action) {
         globalInputLabel.set_text (actionString);
-        currentInputAction = action;
+        currentInputAction = (owned) action;
 
         globalInputField.set_sensitive (true);
         globalInputField.grab_focus ();
