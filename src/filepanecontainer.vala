@@ -21,6 +21,39 @@ class FilePaneContainer : Gtk.Box {
         new_file_pane.connect (new_file_pane_handler);
         new_file_pane_same_wd.connect (new_file_pane_same_wd_handler);
         delete_file_pane.connect (delete_file_pane_handler);
+
+        focus.connect (focus_handler);
+    }
+
+    private bool focus_handler (Gtk.DirectionType directionType) {
+        uint childrenAmount = get_children ().length ();
+        if ( childrenAmount < 2 ) {
+            return true;
+        }
+
+        // This code is somewhat unperformant, this is due to the fact, that
+        // when I preserve the results, I always get null pointers.
+        // Also, `first` and `last` don't seem to work.
+
+        if ( directionType == Gtk.DirectionType.TAB_FORWARD ) {
+            if ( get_children ().find (get_focus_child ()).next != null ) {
+                get_children ().find (get_focus_child ()).next.data.grab_focus ();
+            } else {
+                get_file_pane (0).grab_focus ();
+            }
+
+            return true;
+        } else if ( directionType == Gtk.DirectionType.TAB_BACKWARD ) {
+            if ( get_children ().find (get_focus_child ()).prev != null ) {
+                get_children ().find (get_focus_child ()).prev.data.grab_focus ();
+            } else {
+                get_file_pane (childrenAmount - 1).grab_focus ();
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     public string ? get_dir_of_selected_file_pane () {
@@ -30,8 +63,8 @@ class FilePaneContainer : Gtk.Box {
         return (pane as FilePane).get_current_folder ();
     }
 
-    public Gtk.Widget ? get_file_pane (int32 index) {
-        int32 currentIndex = 0;
+    public Gtk.Widget ? get_file_pane (uint index) {
+        uint currentIndex = 0;
         foreach ( Gtk.Widget element in get_children ()) {
             if ( currentIndex == index ) {
                 return element;
