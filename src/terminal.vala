@@ -8,17 +8,24 @@ public class Terminal : Vte.Terminal {
     [Signal (action = true)]
     public signal void focus_pane (int32 index);
 
-    // Here for now, but will be ignored
     [Signal (action = true)]
-    public signal void focus_terminal ();
+    public signal void copy ();
+
+    [Signal (action = true)]
+    public signal void paste ();
 
     public Terminal (Window window) {
         focus_pane.connect ((index) => {
             window.focus_pane (index);
         });
 
-        child_exited.connect ((t) => { Gtk.main_quit (); });
-        Pid pid;
+        copy.connect (() => {
+            copy_primary ();
+        });
+
+        paste.connect (() => {
+            paste_primary ();
+        });
 
         // TODO Handle error properly and see how to replace call to spawn_sync
         try {
@@ -28,7 +35,7 @@ public class Terminal : Vte.Terminal {
                         null, /* environment */
                         GLib.SpawnFlags.SEARCH_PATH,
                         null, /* child setup */
-                        out pid, /* child pid */
+                        null, /* child pid */
                         null /* cancellable */);
         } catch ( GLib.Error error ) {
             critical ("An error occured while trying to build up the terminal: %s", error.message);

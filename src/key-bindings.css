@@ -46,6 +46,12 @@
     bind "Delete" { "trash_file" () };
 }
 
+@binding-set TerminalBindings
+{
+    bind "<Ctrl><Shift>C" { "copy" () };
+    bind "<Ctrl><Shift>V" { "paste" () };
+}
+
 main-window {
     -gtk-key-bindings: PaneFocusBindings, OtherBindings;
 }
@@ -59,5 +65,5 @@ file-pane-container {
 }
 
 main-window-terminal {
-    -gtk-key-bindings: PaneFocusBindings;
+    -gtk-key-bindings: PaneFocusBindings, TerminalBindings;
 }
